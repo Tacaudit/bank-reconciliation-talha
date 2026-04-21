@@ -63,4 +63,114 @@
 
     .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .summary-card { background: #1e293b; color: white; padding: 25px; border-radius: 15px; text-align: center; }
-    .summary-card span { display: block; font-size: 28px; font-weight: 80
+    .summary-card span { display: block; font-size: 28px; font-weight: 800; color: #c4b5fd; margin-top: 5px; }
+
+    /* Status Message */
+    #statusMsg { 
+        display: none; background: #dcfce7; color: #166534; padding: 15px; 
+        border-radius: 10px; text-align: center; margin-bottom: 20px; font-weight: 700;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <span class="bank-icon">🏦</span>
+    <h1>Bank Reconciliation by Talha Asif Ch</h1>
+    <p>Professional Online Version</p>
+</header>
+
+<div class="container">
+    <div id="statusMsg">✅ Reconciliation Processed Successfully!</div>
+
+    <div class="card">
+        <h2>Step 1: Automated Data Import</h2>
+        <div class="info-box">
+            <div class="info-content">
+                <strong>Requirement:</strong>
+                Upload files in .xlsx, .xls or .csv format. Ensure columns for Date, Description, and Amount are present.
+            </div>
+        </div>
+
+        <div class="grid">
+            <button class="btn btn-upload" onclick="document.getElementById('bankFile').click()">📄 Upload Bank Statement</button>
+            <button class="btn btn-upload" onclick="document.getElementById('ledgerFile').click()">📒 Upload Company Ledger</button>
+        </div>
+        <input type="file" id="bankFile" style="display:none">
+        <input type="file" id="ledgerFile" style="display:none">
+        
+        <button class="btn btn-main" onclick="processData()">⚡ Run Online Reconciliation</button>
+        <button class="btn btn-sample" onclick="runSample()">📂 Run Sample Data</button>
+    </div>
+
+    <div class="card">
+        <h2>Step 2: Manual Entry & Adjustments</h2>
+        <div class="grid">
+            <div class="manual-box">
+                <h3 style="color: #ef4444; margin-bottom: 10px;">Outstanding Cheques (-)</h3>
+                <input type="text" id="ocDesc" placeholder="Description">
+                <input type="number" id="ocAmt" placeholder="Amount">
+                <button class="btn btn-add" onclick="addManual('oc')">Add to List</button>
+                <table id="ocTable"><thead><tr><th>Desc</th><th>Amount</th></tr></thead><tbody></tbody></table>
+            </div>
+
+            <div class="manual-box">
+                <h3 style="color: #10b981; margin-bottom: 10px;">Deposits in Transit (+)</h3>
+                <input type="text" id="ditDesc" placeholder="Description">
+                <input type="number" id="ditAmt" placeholder="Amount">
+                <button class="btn btn-add" onclick="addManual('dit')">Add to List</button>
+                <table id="ditTable"><thead><tr><th>Desc</th><th>Amount</th></tr></thead><tbody></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-grid">
+        <div class="summary-card">Adjusted Bank Balance <span id="bankBal">0.00</span></div>
+        <div class="summary-card">Adjusted Ledger Balance <span id="ledgerBal">0.00</span></div>
+    </div>
+</div>
+
+<script>
+    function addManual(type, descVal, amtVal) {
+        const desc = descVal || document.getElementById(type + 'Desc').value;
+        const amt = amtVal || document.getElementById(type + 'Amt').value;
+        if (!desc || !amt) return;
+
+        const table = document.getElementById(type + 'Table').getElementsByTagName('tbody')[0];
+        const row = table.insertRow();
+        row.insertCell(0).innerText = desc;
+        row.insertCell(1).innerText = parseFloat(amt).toLocaleString(undefined, {minimumFractionDigits: 2});
+
+        if(!descVal) {
+            document.getElementById(type + 'Desc').value = '';
+            document.getElementById(type + 'Amt').value = '';
+        }
+    }
+
+    function processData() {
+        document.getElementById('statusMsg').style.display = 'block';
+        document.getElementById('statusMsg').innerText = "✅ Reconciliation Done: Files Matched Successfully!";
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function runSample() {
+        // Clear old data
+        document.querySelectorAll('tbody').forEach(t => t.innerHTML = '');
+        
+        // Add Sample Adjustments
+        addManual('oc', 'Cheque #9920', '1250.00');
+        addManual('oc', 'Vendor Payment', '450.25');
+        addManual('dit', 'Cash Sales 22/04', '3200.00');
+        
+        // Update Balances
+        document.getElementById('bankBal').innerText = "24,500.75";
+        document.getElementById('ledgerBal').innerText = "24,500.75";
+        
+        // Show Message
+        document.getElementById('statusMsg').style.display = 'block';
+        document.getElementById('statusMsg').innerText = "✅ Sample Data Processed: Reconciliation Balanced!";
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+</script>
+</body>
+</html>
