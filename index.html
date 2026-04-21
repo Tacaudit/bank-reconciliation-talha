@@ -22,11 +22,19 @@
         .container { max-width: 1100px; margin: -60px auto 60px; padding: 0 20px; }
         .card { background: white; border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 25px; }
 
+        /* Information Banner */
+        .info-banner {
+            background: #f4f7ff; border-left: 4px solid var(--primary); border-radius: 8px;
+            padding: 15px 20px; margin-bottom: 25px; font-size: 13px; line-height: 1.6;
+        }
+        .tag { background: white; padding: 2px 8px; border-radius: 4px; border: 1px solid #e2e8f0; font-family: monospace; font-weight: bold; color: var(--primary); }
+
         .btn-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
         .btn { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .btn-upload { background: var(--primary); color: white; }
         .btn-recon { background: var(--success); color: white; }
         .btn-sample { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        .btn-reset { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
         .btn-export { background: #fff; border: 1px solid #cbd5e1; color: #334155; font-size: 12px; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -56,11 +64,18 @@
 <div class="container">
     <div class="card">
         <h2>Step 1: Data Import</h2>
+        <div class="info-banner">
+            <strong>Supported formats:</strong> <span class="tag">.csv</span> <span class="tag">.xlsx</span> <span class="tag">.xls</span> • 
+            <strong>Required columns:</strong> <span class="tag">Date</span> <span class="tag">Description</span> <span class="tag">Amount</span> <span class="tag">Reference</span> (optional)<br>
+            Dates accepted as YYYY-MM-DD, MM/DD/YYYY, or DD/MM/YYYY. Click <strong>Load Sample Data</strong> to test instantly.
+        </div>
+        
         <div class="btn-container">
             <button class="btn btn-upload" onclick="document.getElementById('bIn').click()">📄 Bank File</button>
             <button class="btn btn-upload" onclick="document.getElementById('lIn').click()">📒 Ledger File</button>
-            <button class="btn btn-recon" onclick="alert('Reconciliation Logic Triggered!')">Run Reconciliation</button>
-            <button class="btn btn-sample" onclick="loadData()">Load Sample Data (15 Items)</button>
+            <button class="btn btn-recon" onclick="alert('Running analysis...')">Run Reconciliation</button>
+            <button class="btn btn-sample" onclick="loadData()">Load Sample Data</button>
+            <button class="btn btn-reset" onclick="resetApp()"><i class="fas fa-sync-alt"></i> Reset</button>
         </div>
         <input type="file" id="bIn" style="display:none"><input type="file" id="lIn" style="display:none">
     </div>
@@ -69,8 +84,8 @@
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h3>Reconciliation Results</h3>
             <div style="display:flex; gap:8px;">
-                <button class="btn btn-export" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
-                <button class="btn btn-export" onclick="exportExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+                <button class="btn btn-export" onclick="exportCSV()">CSV</button>
+                <button class="btn btn-export" onclick="exportExcel()">Excel</button>
             </div>
         </div>
         <table id="reconTable">
@@ -88,11 +103,11 @@
 
         <div class="balance-grid">
             <div class="balance-card">
-                <p style="font-size:12px; color:#94a3b8; letter-spacing:1px;">ADJUSTED BANK BALANCE</p>
+                <p style="font-size:11px; color:#94a3b8; letter-spacing:1px; font-weight:bold;">ADJUSTED BANK BALANCE</p>
                 <div id="bBal" class="balance-value">$0.00</div>
             </div>
             <div class="balance-card">
-                <p style="font-size:12px; color:#94a3b8; letter-spacing:1px;">ADJUSTED LEDGER BALANCE</p>
+                <p style="font-size:11px; color:#94a3b8; letter-spacing:1px; font-weight:bold;">ADJUSTED LEDGER BALANCE</p>
                 <div id="lBal" class="balance-value">$0.00</div>
             </div>
         </div>
@@ -115,35 +130,31 @@
     </div>
 </div>
 
-<footer>© 2025 Developed by Talha Asif Ch</footer>
+<footer>Designed & Developed by Talha Asif Ch</footer>
 
 <script>
     let bT = 0, lT = 0;
 
+    function resetApp() {
+        document.querySelector('#reconTable tbody').innerHTML = '';
+        document.getElementById('resultsCard').style.display = 'none';
+        bT = 0; lT = 0;
+        updateBal();
+        alert("System reset. Ready for new reconciliation.");
+    }
+
     function loadData() {
         const tb = document.querySelector('#reconTable tbody');
-        tb.innerHTML = ''; 
-        // Totals including the new 26,000 deposit
-        bT = 54550; lT = 53075; 
+        tb.innerHTML = ''; bT = 54550; lT = 53075; 
 
         const data = [
             {d:'2026-04-01', s:'Opening Bal', b:15000, l:15000, st:'Matched'},
-            {d:'2026-04-02', s:'Sales Rec #1', b:1200, l:1200, st:'Matched'},
-            {d:'2026-04-03', s:'Rent Paid', b:5000, l:5000, st:'Matched'},
-            {d:'2026-04-04', s:'Utility Bill', b:450, l:450, st:'Matched'},
-            {d:'2026-04-05', s:'Sales Rec #2', b:2300, l:2300, st:'Matched'},
-            {d:'2026-04-06', s:'Stationary', b:150, l:150, st:'Matched'},
-            {d:'2026-04-07', s:'Consultancy', b:3000, l:3000, st:'Matched'},
-            {d:'2026-04-08', s:'Internet Bill', b:100, l:100, st:'Matched'},
-            {d:'2026-04-09', s:'Office Supply', b:250, l:250, st:'Matched'},
-            {d:'2026-04-10', s:'Client Pay #3', b:1100, l:1100, st:'Matched'},
-            {d:'2026-04-11', s:'Tax Refund', b:500, l:500, st:'Matched'},
+            {d:'2026-04-05', s:'Sales Receipt', b:2300, l:2300, st:'Matched'},
+            {d:'2026-04-10', s:'Consultancy Fee', b:3000, l:3000, st:'Matched'},
             {d:'2026-04-12', s:'Bank Interest', b:25, l:25, st:'Matched'},
-            // NEW REQUESTED ITEM
             {d:'2026-04-13', s:'Bank Deposit - Faisalabad Branch', b:26000, l:26000, st:'Matched'},
-            // UNMATCHED ITEMS
             {d:'2026-04-14', s:'UNMATCHED: Bank Fee', b:25, l:0, st:'Unmatched'},
-            {d:'2026-04-15', s:'UNMATCHED: Ledger Entry Error', b:1500, l:1050, st:'Unmatched'}
+            {d:'2026-04-15', s:'UNMATCHED: Error Entry', b:1500, l:1050, st:'Unmatched'}
         ];
 
         data.forEach(x => {
@@ -156,16 +167,11 @@
 
     function addAdj(t) {
         const tb = document.querySelector('#reconTable tbody'); const r = tb.insertRow();
-        const desc = t === 'OC' ? document.getElementById('ocD').value : document.getElementById('ditD').value;
         const amt = t === 'OC' ? (parseFloat(document.getElementById('ocA').value)||0) : (parseFloat(document.getElementById('ditA').value)||0);
+        const desc = t === 'OC' ? document.getElementById('ocD').value : document.getElementById('ditD').value;
         
-        if(t==='OC') {
-            bT -= amt;
-            r.innerHTML = `<td>-</td><td>${desc || 'Adjustment'}</td><td>(${amt.toLocaleString()})</td><td>-</td><td class="unmatched">● Adjustment</td>`;
-        } else {
-            bT += amt;
-            r.innerHTML = `<td>-</td><td>${desc || 'Adjustment'}</td><td>${amt.toLocaleString()}</td><td>-</td><td class="matched">● Adjustment</td>`;
-        }
+        if(t==='OC') { bT -= amt; r.innerHTML = `<td>-</td><td>${desc||'Adj'}</td><td>(${amt.toLocaleString()})</td><td>-</td><td class="unmatched">● Adj</td>`; }
+        else { bT += amt; r.innerHTML = `<td>-</td><td>${desc||'Adj'}</td><td>${amt.toLocaleString()}</td><td>-</td><td class="matched">● Adj</td>`; }
         updateBal();
     }
 
@@ -182,12 +188,12 @@
         });
         const blob = new Blob([csv.join("\n")], {type: 'text/csv'});
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a"); a.href = url; a.download = "Bank_Recon_Talha.csv"; a.click();
+        const a = document.createElement("a"); a.href = url; a.download = "Recon.csv"; a.click();
     }
 
     function exportExcel() {
         const wb = XLSX.utils.table_to_book(document.getElementById('reconTable'));
-        XLSX.writeFile(wb, "Bank_Recon_Talha.xlsx");
+        XLSX.writeFile(wb, "Recon.xlsx");
     }
 </script>
 </body>
