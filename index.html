@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bank Reconciliation by Talha Asif Ch</title>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        /* New Custom Palette: Green & Yellow Gradient Theme */
+        --primary: #15803d; /* Forest Green */
+        --primary-dark: #166534;
+        --primary-light: #f0fdf4;
+        --accent-yellow: #eab308; /* Vibrant Yellow */
+        --success: #16a34a;
+        --success-light: #dcfce7;
+        --warning: #ca8a04;
+        --warning-light: #fef9c3;
+        --danger: #dc2626;
+        --danger-light: #fee2e2;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-500: #6b7280;
+        --gray-900: #111827;
+        --shadow: 0 1px 3px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+        background: #f8fafc;
+        color: var(--gray-900);
+        line-height: 1.5;
+    }
+
+    /* Updated Header with Green/Yellow Gradient */
+    header {
+        background: linear-gradient(135deg, #166534 0%, #15803d 50%, #eab308 100%);
+        color: #fff;
+        padding: 40px;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+    }
+
+    header h1 {
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .header-badge {
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(5px);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .container { max-width: 1400px; margin: -20px auto 40px; padding: 0 24px; }
+    .card { background: #fff; border-radius: 12px; box-shadow: var(--shadow); padding: 28px; margin-bottom: 24px; border: 1px solid var(--gray-100); }
+    
+    .btn-primary { background: var(--primary); color: #fff; border:none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    
+    .btn-success { background: var(--accent-yellow); color: #422006; font-weight: 700; border:none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+    .btn-success:hover { background: #ca8a04; color: #fff; }
+
+    .summary-card::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); }
+    .summary-card.matched::before { background: var(--accent-yellow); }
+
+    .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+    .tab.active .count { background: var(--primary); color: white; }
+
+    /* Customizing Table Confidence Colors to match theme */
+    .high-confidence { background: rgba(22, 163, 74, 0.1) !important; }
+    .medium-confidence { background: rgba(234, 179, 8, 0.1) !important; }
+    
+    footer { text-align: center; padding: 20px; color: var(--gray-500); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header>
+    <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1>Bank Reconciliation by Talha Asif Ch</h1>
+            <p>Professional Offline Matching & Visual Analytics</p>
+        </div>
+        <div class="header-badge">🔒 Local Browser Processing</div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h2>Step 1 — Upload Files</h2>
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+             <button class="btn-primary" onclick="document.getElementById('bankFile').click()">📄 Bank File</button>
+             <button class="btn-primary" onclick="document.getElementById('ledgerFile').click()">📒 Ledger File</button>
+             <button id="runReconBtn" class="btn-success">⚡ Run Reconciliation</button>
+        </div>
+        <input type="file" id="bankFile" style="display:none">
+        <input type="file" id="ledgerFile" style="display:none">
+    </div>
+</div>
+
+<footer>Bank Reconciliation by Talha Asif Ch · Private & Secure</footer>
+</body>
+</html>
