@@ -5,67 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bank Reconciliation by Talha Asif Ch</title>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             --bg: #f8fafc;
+            --dark-blue: #1e293b;
             --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', 'Segoe UI', sans-serif; background-color: var(--bg); color: #1e293b; min-height: 100vh; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background-color: var(--bg); color: #1e293b; }
 
-        /* Restored Top Header Format */
+        /* Professional Header with Bank Icon */
         header {
             background: var(--primary-gradient);
-            color: white; padding: 50px 20px 100px; text-align: center;
+            color: white; padding: 60px 20px 100px; text-align: center;
         }
-        header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
-        header p { opacity: 0.9; font-size: 16px; }
+        header h1 { font-size: 36px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        header p { opacity: 0.9; margin-top: 10px; font-size: 18px; letter-spacing: 0.5px; }
 
         .container { max-width: 1100px; margin: -60px auto 60px; padding: 0 20px; }
-
-        /* Restored Balance Cards */
-        .summary-banner {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-            background: #1e293b; border-radius: 20px; padding: 40px; margin-bottom: 25px; color: white;
-            box-shadow: var(--card-shadow);
-        }
-        .summary-item { text-align: center; }
-        .summary-label { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
-        .summary-value { font-size: 42px; font-weight: bold; color: #818cf8; margin-top: 10px; }
-
         .card { background: white; border-radius: 16px; padding: 30px; box-shadow: var(--card-shadow); margin-bottom: 25px; }
-        h2 { font-size: 20px; color: #4338ca; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
 
-        /* Info Box Style */
         .info-box {
             background: #f0f7ff; border-left: 4px solid #3b82f6; border-radius: 8px;
-            padding: 15px 20px; margin-bottom: 20px; font-size: 14px; color: #1e40af;
+            padding: 15px 20px; margin-bottom: 25px; font-size: 14px; color: #1e40af;
         }
 
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        /* Balance Cards - SEPARATED */
+        .balance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
+        .balance-card { 
+            background: var(--dark-blue); color: white; padding: 30px; border-radius: 16px; 
+            text-align: center; box-shadow: var(--card-shadow);
+        }
+        .balance-label { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; font-weight: 600; }
+        .balance-value { font-size: 38px; font-weight: 800; color: #818cf8; margin-top: 8px; }
 
-        .btn {
-            padding: 14px 20px; border: none; border-radius: 10px; cursor: pointer;
-            font-weight: 700; font-size: 13px; transition: 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        .btn { 
+            padding: 14px 20px; border: none; border-radius: 10px; cursor: pointer; 
+            font-weight: 700; transition: 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-upload { background: #6366f1; color: white; width: 100%; }
         .btn-run { background: #10b981; color: white; width: 100%; margin-top: 15px; text-transform: uppercase; }
-        .btn-sample { background: #f1f5f9; color: #475569; width: 100%; margin-top: 10px; border: 1px solid #e2e8f0; }
-        
-        /* Adjustment Buttons */
-        .btn-adj-red { background: #ef4444; color: white; width: 100%; }
-        .btn-adj-green { background: #10b981; color: white; width: 100%; }
+        .btn-sample { background: #f1f5f9; color: #475569; width: 100%; margin-top: 10px; }
+
+        .adj-box { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; outline: none; }
+        input:focus { border-color: #6366f1; }
 
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; padding: 12px; background: #f8fafc; color: #64748b; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
         td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
         .matched-row { background-color: #f0fdf4; }
-        .unmatched-row { background-color: #fef2f2; }
-
-        .input-group { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
-        input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
 
         footer { text-align: center; padding: 40px; color: #64748b; font-weight: 600; border-top: 1px solid #e2e8f0; margin-top: 40px; }
     </style>
@@ -73,26 +67,15 @@
 <body>
 
 <header>
-    <h1>Bank Reconciliation by Talha Asif Ch</h1>
+    <h1><i class="fas fa-university"></i> Bank Reconciliation by Talha Asif Ch</h1>
     <p>Professional Online Version</p>
 </header>
 
 <div class="container">
-    <div class="summary-banner">
-        <div class="summary-item">
-            <div class="summary-label">Adjusted Bank Balance</div>
-            <div id="adjBankBalance" class="summary-value">$0.00</div>
-        </div>
-        <div class="summary-item">
-            <div class="summary-label">Adjusted Ledger Balance</div>
-            <div id="adjLedgerBalance" class="summary-value">$0.00</div>
-        </div>
-    </div>
-
     <div class="card">
         <h2>Step 1: Automated Data Import</h2>
         <div class="info-box">
-            <strong>Requirement:</strong> Upload .xlsx or .csv files. Required columns: Date, Description, Amount.
+            <strong>Requirement:</strong> Upload files in .xlsx or .csv format. Ensure columns for Date, Description, and Amount are included.
         </div>
         <div class="grid">
             <button class="btn btn-upload" onclick="document.getElementById('bankFile').click()">📄 UPLOAD BANK FILE</button>
@@ -101,16 +84,13 @@
         <input type="file" id="bankFile" style="display:none">
         <input type="file" id="ledgerFile" style="display:none">
         
-        <button class="btn btn-run" onclick="showTable()">⚡ Run Reconciliation</button>
-        <button class="btn btn-sample" onclick="runSample()">📂 Load Sample Data</button>
+        <button class="btn btn-run" onclick="runSample()">⚡ Run Reconciliation & Load Sample</button>
     </div>
 
     <div class="card" id="resultsCard" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3 style="color: #1e293b;">Matching Results</h3>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn" style="padding:8px 15px; background:#f1f5f9; font-size:11px;" onclick="exportExcel()">📊 EXCEL</button>
-            </div>
+            <h3>Matching Results</h3>
+            <button class="btn" style="background:#f1f5f9; color:#475569; padding:8px 15px;" onclick="exportExcel()">📊 EXCEL REPORT</button>
         </div>
         <div style="overflow-x: auto;">
             <table id="resultsTable">
@@ -126,22 +106,33 @@
                 <tbody></tbody>
             </table>
         </div>
+
+        <div class="balance-grid">
+            <div class="balance-card">
+                <div class="balance-label">Adjusted Bank Balance</div>
+                <div id="adjBankBalance" class="balance-value">$0.00</div>
+            </div>
+            <div class="balance-card">
+                <div class="balance-label">Adjusted Ledger Balance</div>
+                <div id="adjLedgerBalance" class="balance-value">$0.00</div>
+            </div>
+        </div>
     </div>
 
     <div class="card">
         <h2>Step 2: Manual Adjustments</h2>
         <div class="grid">
-            <div class="input-group">
+            <div class="adj-box">
                 <h3 style="color: #ef4444; margin-bottom: 15px; font-size: 16px;">Outstanding Cheques (-)</h3>
-                <input type="text" id="ocDesc" placeholder="Description (e.g. Chq #102)">
+                <input type="text" id="ocDesc" placeholder="Description (e.g. Chq #552)">
                 <input type="number" id="ocAmt" placeholder="Amount">
-                <button class="btn btn-adj-red" onclick="processAdj('OC')">Add Cheque</button>
+                <button class="btn" style="background:#ef4444; color:white; width:100%;" onclick="addManualEntry('OC')">Add to Reconciliation</button>
             </div>
-            <div class="input-group">
+            <div class="adj-box">
                 <h3 style="color: #10b981; margin-bottom: 15px; font-size: 16px;">Deposits in Transit (+)</h3>
                 <input type="text" id="ditDesc" placeholder="Description (e.g. Cash Deposit)">
                 <input type="number" id="ditAmt" placeholder="Amount">
-                <button class="btn btn-adj-green" onclick="processAdj('DIT')">Add Deposit</button>
+                <button class="btn" style="background:#10b981; color:white; width:100%;" onclick="addManualEntry('DIT')">Add to Reconciliation</button>
             </div>
         </div>
     </div>
@@ -154,13 +145,9 @@
 <script>
     let bankTotal = 0, ledgerTotal = 0;
 
-    function updateBalances() {
+    function updateDisplay() {
         document.getElementById('adjBankBalance').innerText = `$${bankTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
         document.getElementById('adjLedgerBalance').innerText = `$${ledgerTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-    }
-
-    function showTable() {
-        document.getElementById('resultsCard').style.display = 'block';
     }
 
     function runSample() {
@@ -168,61 +155,45 @@
         tbody.innerHTML = '';
         bankTotal = 25000.00; ledgerTotal = 25000.00;
         
-        const sampleItems = [
-            { d: '2025-04-01', s: 'Opening Balance', b: 25000, l: 25000, st: 'Matched' },
-            { d: '2025-04-05', s: 'Invoice #1021', b: 2450, l: 2450, st: 'Matched' },
-            { d: '2025-04-10', s: 'Electricity Bill', b: 420, l: 420, st: 'Matched' },
-            { d: '2025-04-12', s: 'Office Rent', b: 5000, l: 5000, st: 'Matched' },
-            { d: '2025-04-13', s: 'Bank Interest', b: 15, l: 15, st: 'Matched' },
-            { d: '2025-04-14', s: 'Internet Charges', b: 80, l: 80, st: 'Matched' },
-            { d: '2025-04-15', s: 'Client Payment', b: 1200, l: 1200, st: 'Matched' },
-            { d: '2025-04-16', s: 'Petty Cash', b: 100, l: 100, st: 'Matched' },
-            { d: '2025-04-17', s: 'Service Fee', b: 50, l: 50, st: 'Matched' },
-            { d: '2025-04-18', s: 'Furniture Repair', b: 300, l: 300, st: 'Matched' },
-            { d: '2025-04-19', s: 'Stationery', b: 45, l: 45, st: 'Matched' },
-            { d: '2025-04-20', s: 'Consultancy Fee', b: 1500, l: 1500, st: 'Matched' },
-            { d: '2025-04-21', s: 'Unmatched: Bank Fee', b: 25, l: 0, st: 'Unmatched' },
-            { d: '2025-04-22', s: 'Unmatched: Discrepancy', b: 1000, l: 850, st: 'Unmatched' }
+        const data = [
+            { d: '2025-04-01', s: 'Opening Balance', b: 25000, l: 25000 },
+            { d: '2025-04-05', s: 'Vendor Payment #441', b: 1200, l: 1200 },
+            { d: '2025-04-12', s: 'Customer Receipt #992', b: 3450, l: 3450 }
         ];
 
-        sampleItems.forEach(item => {
+        data.forEach(item => {
             const row = tbody.insertRow();
-            row.className = item.st === 'Matched' ? 'matched-row' : 'unmatched-row';
-            row.innerHTML = `
-                <td>${item.d}</td>
-                <td>${item.s}</td>
-                <td>${item.b.toLocaleString()}</td>
-                <td>${item.l > 0 ? item.l.toLocaleString() : '-'}</td>
-                <td style="color:${item.st === 'Matched' ? '#16a34a' : '#dc2626'}; font-weight:700;">● ${item.st}</td>
-            `;
+            row.className = 'matched-row';
+            row.innerHTML = `<td>${item.d}</td><td>${item.s}</td><td>${item.b.toLocaleString()}</td><td>${item.l.toLocaleString()}</td><td style="color:#16a34a; font-weight:700;">● Matched</td>`;
         });
-        updateBalances();
-        showTable();
+
+        document.getElementById('resultsCard').style.display = 'block';
+        updateDisplay();
     }
 
-    function processAdj(type) {
+    function addManualEntry(type) {
         const tbody = document.querySelector('#resultsTable tbody');
         const row = tbody.insertRow();
         const date = new Date().toISOString().split('T')[0];
         
         if (type === 'OC') {
-            const desc = document.getElementById('ocDesc').value || "Outstanding Cheque";
             const amt = parseFloat(document.getElementById('ocAmt').value) || 0;
+            const desc = document.getElementById('ocDesc').value || "Adjustment";
             bankTotal -= amt;
             row.innerHTML = `<td>${date}</td><td>${desc}</td><td>(${amt.toLocaleString()})</td><td>-</td><td style="color:#ef4444">● Adjustment</td>`;
         } else {
-            const desc = document.getElementById('ditDesc').value || "Deposit in Transit";
             const amt = parseFloat(document.getElementById('ditAmt').value) || 0;
+            const desc = document.getElementById('ditDesc').value || "Adjustment";
             bankTotal += amt;
             row.innerHTML = `<td>${date}</td><td>${desc}</td><td>${amt.toLocaleString()}</td><td>-</td><td style="color:#10b981">● Adjustment</td>`;
         }
-        updateBalances();
-        showTable();
+        updateDisplay();
+        document.getElementById('resultsCard').style.display = 'block';
     }
 
     function exportExcel() {
         const wb = XLSX.utils.table_to_book(document.getElementById('resultsTable'));
-        XLSX.writeFile(wb, "Talha_Reconciliation_Report.xlsx");
+        XLSX.writeFile(wb, "Reconciliation_Report_2025.xlsx");
     }
 </script>
 </body>
