@@ -1,99 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Bank Reconciliation by Talha Asif Ch</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Reconciliation by Talha Asif Ch</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --bg: #f8fafc;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
 
-<style>
-    :root {
-        --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-        --bg: #f8fafc;
-        --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: #1e293b; display: flex; flex-direction: column; min-height: 100vh; }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: #1e293b; display: flex; flex-direction: column; min-height: 100vh; }
+        header {
+            background: var(--primary-gradient);
+            color: white; padding: 60px 20px; text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
 
-    header {
-        background: var(--primary-gradient);
-        color: white; padding: 60px 20px; text-align: center;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    }
-    .bank-icon { font-size: 60px; display: block; margin-bottom: 10px; }
+        .container { max-width: 1100px; margin: -50px auto 60px; padding: 0 20px; flex: 1; }
+        .card { background: white; border-radius: 20px; padding: 30px; box-shadow: var(--card-shadow); margin-bottom: 25px; }
 
-    .container { max-width: 1100px; margin: -50px auto 60px; padding: 0 20px; flex: 1; }
-    .card { background: white; border-radius: 20px; padding: 30px; box-shadow: var(--card-shadow); margin-bottom: 25px; }
+        .info-box {
+            background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px;
+            padding: 15px 20px; margin-bottom: 25px; color: #1e40af; font-size: 14px;
+        }
 
-    /* Requirement Info Box */
-    .info-box {
-        background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px;
-        padding: 15px 20px; display: flex; gap: 12px; margin-bottom: 25px;
-    }
-    .info-content { color: #1e40af; font-size: 14px; text-align: left; }
-    .info-content strong { color: #1e3a8a; display: block; margin-bottom: 3px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-    h2 { color: #4f46e5; margin-bottom: 20px; font-size: 22px; border-left: 5px solid #7c3aed; padding-left: 15px; }
+        .btn {
+            padding: 14px 24px; border: none; border-radius: 12px; cursor: pointer;
+            font-weight: 700; font-size: 13px; transition: 0.3s ease;
+            text-transform: uppercase; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-upload { background: #4f46e5; color: white; width: 100%; }
+        .btn-main { background: #10b981; color: white; width: 100%; margin-top: 15px; }
+        .btn-sample { background: #6366f1; color: white; width: 100%; margin-top: 10px; }
+        .btn-download { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; font-size: 12px; padding: 8px 15px; }
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        /* Summary Card Style */
+        .summary-container {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            background: #1e293b; border-radius: 20px; padding: 30px; margin-bottom: 25px; color: white;
+        }
+        .summary-item { text-align: center; }
+        .summary-value { font-size: 32px; font-weight: bold; color: #818cf8; margin-top: 10px; }
 
-    /* Button Styles */
-    .btn {
-        padding: 14px 24px; border: none; border-radius: 12px; cursor: pointer;
-        font-weight: 700; font-size: 13px; transition: 0.3s ease;
-        text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex;
-        align-items: center; justify-content: center; gap: 8px;
-    }
-    .btn-upload { background: #4f46e5; color: white; width: 100%; }
-    .btn-upload:hover { background: #4338ca; }
-    
-    .btn-main { background: #10b981; color: white; width: 100%; margin-top: 15px; }
-    .btn-sample { background: #6366f1; color: white; width: 100%; margin-top: 10px; }
-    .btn-download { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; font-size: 12px; padding: 10px 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; padding: 12px; background: #f8fafc; color: #64748b; font-size: 12px; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        .matched-row { background-color: #f0fdf4; }
+        .unmatched-row { background-color: #fef2f2; }
 
-    /* Results Table */
-    .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .table-container { overflow-x: auto; margin-top: 10px; border-radius: 10px; border: 1px solid #e2e8f0; }
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 12px; background: #f8fafc; color: #64748b; font-size: 12px; border-bottom: 2px solid #e2e8f0; }
-    td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 500; }
-    .matched-row { background-color: #f0fdf4; }
+        .manual-box { background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0; }
+        input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; }
 
-    .manual-box { background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0; }
-    input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; font-size: 14px; }
-
-    #statusMsg { 
-        display: none; background: #dcfce7; color: #166534; padding: 15px; 
-        border-radius: 12px; text-align: center; margin-bottom: 20px; font-weight: 700;
-    }
-
-    footer {
-        text-align: center; padding: 40px 20px; background: white; border-top: 1px solid #e2e8f0; margin-top: auto;
-    }
-    .copyright-text { color: #64748b; font-size: 15px; font-weight: 600; }
-</style>
+        footer { text-align: center; padding: 40px 20px; background: white; border-top: 1px solid #e2e8f0; margin-top: auto; }
+    </style>
 </head>
 <body>
 
 <header>
-    <span class="bank-icon">🏦</span>
     <h1>Bank Reconciliation by Talha Asif Ch</h1>
     <p>Professional Online Version</p>
 </header>
 
 <div class="container">
-    <div id="statusMsg">✅ Reconciliation Done: Results Ready Below!</div>
+    <div class="summary-container">
+        <div class="summary-item">
+            <p>Adjusted Bank Balance</p>
+            <div id="adjBankBalance" class="summary-value">$0.00</div>
+        </div>
+        <div class="summary-item">
+            <p>Adjusted Ledger Balance</p>
+            <div id="adjLedgerBalance" class="summary-value">$0.00</div>
+        </div>
+    </div>
 
     <div class="card">
         <h2>Step 1: Automated Data Import</h2>
         <div class="info-box">
-            <div class="info-content">
-                <strong>Requirement:</strong>
-                Upload files in .xlsx, .xls or .csv format. Ensure columns for Date, Description, and Amount are present.
-            </div>
+            <strong>Requirement:</strong> Upload .xlsx or .csv files. Required columns: Date, Description, Amount.
         </div>
-
         <div class="grid">
             <button class="btn btn-upload" onclick="document.getElementById('bankFile').click()">📄 Upload Bank File</button>
             <button class="btn btn-upload" onclick="document.getElementById('ledgerFile').click()">📒 Upload Ledger File</button>
@@ -101,19 +92,19 @@
         <input type="file" id="bankFile" style="display:none">
         <input type="file" id="ledgerFile" style="display:none">
         
-        <button class="btn btn-main" onclick="showResults()">⚡ Run Online Reconciliation</button>
+        <button class="btn btn-main" onclick="showResults()">⚡ Run Reconciliation</button>
         <button class="btn btn-sample" onclick="runSample()">📂 Load Sample Data</button>
     </div>
 
     <div class="card" id="resultsCard" style="display: none;">
-        <div class="results-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3>Matching Results</h3>
             <div style="display: flex; gap: 10px;">
-                <button class="btn btn-download" onclick="exportToCSV()">📄 CSV</button>
-                <button class="btn btn-download" onclick="exportToExcel()">📊 EXCEL</button>
+                <button class="btn btn-download" onclick="exportCSV()">📄 CSV</button>
+                <button class="btn btn-download" onclick="exportExcel()">📊 EXCEL</button>
             </div>
         </div>
-        <div class="table-container">
+        <div style="overflow-x: auto;">
             <table id="resultsTable">
                 <thead>
                     <tr>
@@ -134,72 +125,102 @@
         <div class="grid">
             <div class="manual-box">
                 <h3 style="color: #ef4444; margin-bottom: 12px;">Outstanding Cheques (-)</h3>
-                <input type="text" placeholder="Description">
-                <input type="number" placeholder="Amount">
+                <input type="text" id="ocDesc" placeholder="Description">
+                <input type="number" id="ocAmt" placeholder="Amount">
+                <button class="btn btn-upload" style="background:#ef4444" onclick="addAdj('OC')">Add Cheque</button>
             </div>
             <div class="manual-box">
                 <h3 style="color: #10b981; margin-bottom: 12px;">Deposits in Transit (+)</h3>
-                <input type="text" placeholder="Description">
-                <input type="number" placeholder="Amount">
+                <input type="text" id="ditDesc" placeholder="Description">
+                <input type="number" id="ditAmt" placeholder="Amount">
+                <button class="btn btn-upload" style="background:#10b981" onclick="addAdj('DIT')">Add Deposit</button>
             </div>
         </div>
     </div>
 </div>
 
 <footer>
-    <div class="copyright-text">
+    <div style="color: #64748b; font-weight: 600;">
         © 2025 Developed by Talha Asif Ch. All Rights Reserved.
     </div>
 </footer>
 
 <script>
+    let bankBal = 0, ledgerBal = 0;
+
+    function updateUI() {
+        document.getElementById('adjBankBalance').innerText = `$${bankBal.toLocaleString()}`;
+        document.getElementById('adjLedgerBalance').innerText = `$${ledgerBal.toLocaleString()}`;
+    }
+
     function showResults() {
         document.getElementById('resultsCard').style.display = 'block';
-        document.getElementById('statusMsg').style.display = 'block';
-        window.scrollTo({ top: document.getElementById('resultsCard').offsetTop - 20, behavior: 'smooth' });
     }
 
     function runSample() {
         const tbody = document.querySelector('#resultsTable tbody');
         tbody.innerHTML = '';
-        const sampleData = [
-            { date: '2025-04-01', desc: 'Opening Balance', bank: '15,000.00', ledger: '15,000.00', status: 'Matched' },
-            { date: '2025-04-05', desc: 'Inv #1021 - Al-Noor Traders', bank: '2,450.00', ledger: '2,450.00', status: 'Matched' },
-            { date: '2025-04-12', desc: 'Electricity Bill', bank: '420.00', ledger: '420.00', status: 'Matched' },
-            { date: '2025-04-20', desc: 'Deposit - Faisalabad Branch', bank: '12,000.00', ledger: '12,000.00', status: 'Matched' }
+        bankBal = 25000; ledgerBal = 25000;
+        
+        const data = [
+            { d: '2025-04-01', s: 'Opening Balance', b: '25,000', l: '25,000', st: 'Matched' },
+            { d: '2025-04-02', s: 'Invoice #501', b: '1,200', l: '1,200', st: 'Matched' },
+            { d: '2025-04-03', s: 'Office Rent', b: '5,000', l: '5,000', st: 'Matched' },
+            { d: '2025-04-04', s: 'Customer Receipt', b: '3,450', l: '3,450', st: 'Matched' },
+            { d: '2025-04-05', s: 'Internet Bill', b: '85', l: '85', st: 'Matched' },
+            { d: '2025-04-06', s: 'Furniture Buy', b: '2,100', l: '2,100', st: 'Matched' },
+            { d: '2025-04-07', s: 'Cash Deposit', b: '8,400', l: '8,400', st: 'Matched' },
+            { d: '2025-04-08', s: 'Vendor Pay', b: '950', l: '950', st: 'Matched' },
+            { d: '2025-04-09', s: 'Courier', b: '45', l: '45', st: 'Matched' },
+            { d: '2025-04-10', s: 'Consultancy', b: '1,500', l: '1,500', st: 'Matched' },
+            { d: '2025-04-11', s: 'Tax Refund', b: '600', l: '600', st: 'Matched' },
+            { d: '2025-04-12', s: 'Bank Interest', b: '120', l: '120', st: 'Matched' },
+            { d: '2025-04-13', s: 'Unmatched: Bank Fee', b: '25', l: '0', st: 'Unmatched' },
+            { d: '2025-04-14', s: 'Unmatched: Typo', b: '1,500', l: '1,050', st: 'Unmatched' }
         ];
-        sampleData.forEach(item => {
+
+        data.forEach(item => {
             const row = tbody.insertRow();
-            row.className = 'matched-row';
-            row.innerHTML = `<td>${item.date}</td><td>${item.desc}</td><td>${item.bank}</td><td>${item.ledger}</td><td style="color:#16a34a">● ${item.status}</td>`;
+            row.className = item.st === 'Matched' ? 'matched-row' : 'unmatched-row';
+            row.innerHTML = `<td>${item.d}</td><td>${item.s}</td><td>${item.b}</td><td>${item.l}</td><td style="color:${item.st === 'Matched' ? '#16a34a' : '#dc2626'}">● ${item.st}</td>`;
         });
+        updateUI();
         showResults();
     }
 
-    // Functional CSV Export
-    function exportToCSV() {
-        const table = document.getElementById("resultsTable");
-        let csv = [];
-        const rows = table.querySelectorAll("tr");
-        for (let i = 0; i < rows.length; i++) {
-            const row = [], cols = rows[i].querySelectorAll("td, th");
-            for (let j = 0; j < cols.length; j++) row.push('"' + cols[j].innerText + '"');
-            csv.push(row.join(","));
+    function addAdj(type) {
+        const tbody = document.querySelector('#resultsTable tbody');
+        const row = tbody.insertRow();
+        if (type === 'OC') {
+            const val = parseFloat(document.getElementById('ocAmt').value) || 0;
+            bankBal -= val;
+            row.innerHTML = `<td>2025-04-22</td><td>${document.getElementById('ocDesc').value}</td><td>(${val})</td><td>-</td><td style="color:#ef4444">● Adj</td>`;
+        } else {
+            const val = parseFloat(document.getElementById('ditAmt').value) || 0;
+            bankBal += val;
+            row.innerHTML = `<td>2025-04-22</td><td>${document.getElementById('ditDesc').value}</td><td>${val}</td><td>-</td><td style="color:#10b981">● Adj</td>`;
         }
-        const csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
-        const downloadLink = document.createElement("a");
-        downloadLink.download = "Bank_Reconciliation_2025.csv";
-        downloadLink.href = window.URL.createObjectURL(csvFile);
-        downloadLink.style.display = "none";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
+        updateUI();
+        showResults();
     }
 
-    // Functional Excel Export
-    function exportToExcel() {
-        const table = document.getElementById("resultsTable");
-        const wb = XLSX.utils.table_to_book(table, { sheet: "Results" });
-        XLSX.writeFile(wb, "Bank_Reconciliation_2025.xlsx");
+    function exportCSV() {
+        let csv = [];
+        const rows = document.querySelectorAll("table tr");
+        rows.forEach(r => {
+            let row = [];
+            r.querySelectorAll("td, th").forEach(c => row.push('"' + c.innerText + '"'));
+            csv.push(row.join(","));
+        });
+        const blob = new Blob([csv.join("\n")], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "Reconciliation_2025.csv"; a.click();
+    }
+
+    function exportExcel() {
+        const wb = XLSX.utils.table_to_book(document.getElementById('resultsTable'));
+        XLSX.writeFile(wb, "Reconciliation_2025.xlsx");
     }
 </script>
 </body>
