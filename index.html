@@ -7,58 +7,67 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             --bg: #f8fafc;
             --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: #1e293b; display: flex; flex-direction: column; min-height: 100vh; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background-color: var(--bg); color: #1e293b; min-height: 100vh; }
 
+        /* Restored Top Header Format */
         header {
             background: var(--primary-gradient);
-            color: white; padding: 60px 20px; text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            color: white; padding: 50px 20px 100px; text-align: center;
         }
+        header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        header p { opacity: 0.9; font-size: 16px; }
 
-        .container { max-width: 1100px; margin: -50px auto 60px; padding: 0 20px; flex: 1; }
-        .card { background: white; border-radius: 20px; padding: 30px; box-shadow: var(--card-shadow); margin-bottom: 25px; }
+        .container { max-width: 1100px; margin: -60px auto 60px; padding: 0 20px; }
 
+        /* Restored Balance Cards */
+        .summary-banner {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            background: #1e293b; border-radius: 20px; padding: 40px; margin-bottom: 25px; color: white;
+            box-shadow: var(--card-shadow);
+        }
+        .summary-item { text-align: center; }
+        .summary-label { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+        .summary-value { font-size: 42px; font-weight: bold; color: #818cf8; margin-top: 10px; }
+
+        .card { background: white; border-radius: 16px; padding: 30px; box-shadow: var(--card-shadow); margin-bottom: 25px; }
+        h2 { font-size: 20px; color: #4338ca; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+        /* Info Box Style */
         .info-box {
-            background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px;
-            padding: 15px 20px; margin-bottom: 25px; color: #1e40af; font-size: 14px;
+            background: #f0f7ff; border-left: 4px solid #3b82f6; border-radius: 8px;
+            padding: 15px 20px; margin-bottom: 20px; font-size: 14px; color: #1e40af;
         }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
         .btn {
-            padding: 14px 24px; border: none; border-radius: 12px; cursor: pointer;
-            font-weight: 700; font-size: 13px; transition: 0.3s ease;
-            text-transform: uppercase; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 14px 20px; border: none; border-radius: 10px; cursor: pointer;
+            font-weight: 700; font-size: 13px; transition: 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-upload { background: #4f46e5; color: white; width: 100%; }
-        .btn-main { background: #10b981; color: white; width: 100%; margin-top: 15px; }
-        .btn-sample { background: #6366f1; color: white; width: 100%; margin-top: 10px; }
-        .btn-download { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; font-size: 12px; padding: 8px 15px; }
+        .btn-upload { background: #6366f1; color: white; width: 100%; }
+        .btn-run { background: #10b981; color: white; width: 100%; margin-top: 15px; text-transform: uppercase; }
+        .btn-sample { background: #f1f5f9; color: #475569; width: 100%; margin-top: 10px; border: 1px solid #e2e8f0; }
+        
+        /* Adjustment Buttons */
+        .btn-adj-red { background: #ef4444; color: white; width: 100%; }
+        .btn-adj-green { background: #10b981; color: white; width: 100%; }
 
-        /* Summary Card Style */
-        .summary-container {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-            background: #1e293b; border-radius: 20px; padding: 30px; margin-bottom: 25px; color: white;
-        }
-        .summary-item { text-align: center; }
-        .summary-value { font-size: 32px; font-weight: bold; color: #818cf8; margin-top: 10px; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { text-align: left; padding: 12px; background: #f8fafc; color: #64748b; font-size: 12px; border-bottom: 2px solid #e2e8f0; }
-        td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; background: #f8fafc; color: #64748b; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
         .matched-row { background-color: #f0fdf4; }
         .unmatched-row { background-color: #fef2f2; }
 
-        .manual-box { background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0; }
-        input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; }
+        .input-group { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
 
-        footer { text-align: center; padding: 40px 20px; background: white; border-top: 1px solid #e2e8f0; margin-top: auto; }
+        footer { text-align: center; padding: 40px; color: #64748b; font-weight: 600; border-top: 1px solid #e2e8f0; margin-top: 40px; }
     </style>
 </head>
 <body>
@@ -69,13 +78,13 @@
 </header>
 
 <div class="container">
-    <div class="summary-container">
+    <div class="summary-banner">
         <div class="summary-item">
-            <p>Adjusted Bank Balance</p>
+            <div class="summary-label">Adjusted Bank Balance</div>
             <div id="adjBankBalance" class="summary-value">$0.00</div>
         </div>
         <div class="summary-item">
-            <p>Adjusted Ledger Balance</p>
+            <div class="summary-label">Adjusted Ledger Balance</div>
             <div id="adjLedgerBalance" class="summary-value">$0.00</div>
         </div>
     </div>
@@ -86,22 +95,21 @@
             <strong>Requirement:</strong> Upload .xlsx or .csv files. Required columns: Date, Description, Amount.
         </div>
         <div class="grid">
-            <button class="btn btn-upload" onclick="document.getElementById('bankFile').click()">📄 Upload Bank File</button>
-            <button class="btn btn-upload" onclick="document.getElementById('ledgerFile').click()">📒 Upload Ledger File</button>
+            <button class="btn btn-upload" onclick="document.getElementById('bankFile').click()">📄 UPLOAD BANK FILE</button>
+            <button class="btn btn-upload" onclick="document.getElementById('ledgerFile').click()">📒 UPLOAD LEDGER FILE</button>
         </div>
         <input type="file" id="bankFile" style="display:none">
         <input type="file" id="ledgerFile" style="display:none">
         
-        <button class="btn btn-main" onclick="showResults()">⚡ Run Reconciliation</button>
+        <button class="btn btn-run" onclick="showTable()">⚡ Run Reconciliation</button>
         <button class="btn btn-sample" onclick="runSample()">📂 Load Sample Data</button>
     </div>
 
     <div class="card" id="resultsCard" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3>Matching Results</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: #1e293b;">Matching Results</h3>
             <div style="display: flex; gap: 10px;">
-                <button class="btn btn-download" onclick="exportCSV()">📄 CSV</button>
-                <button class="btn btn-download" onclick="exportExcel()">📊 EXCEL</button>
+                <button class="btn" style="padding:8px 15px; background:#f1f5f9; font-size:11px;" onclick="exportExcel()">📊 EXCEL</button>
             </div>
         </div>
         <div style="overflow-x: auto;">
@@ -123,104 +131,98 @@
     <div class="card">
         <h2>Step 2: Manual Adjustments</h2>
         <div class="grid">
-            <div class="manual-box">
-                <h3 style="color: #ef4444; margin-bottom: 12px;">Outstanding Cheques (-)</h3>
-                <input type="text" id="ocDesc" placeholder="Description">
+            <div class="input-group">
+                <h3 style="color: #ef4444; margin-bottom: 15px; font-size: 16px;">Outstanding Cheques (-)</h3>
+                <input type="text" id="ocDesc" placeholder="Description (e.g. Chq #102)">
                 <input type="number" id="ocAmt" placeholder="Amount">
-                <button class="btn btn-upload" style="background:#ef4444" onclick="addAdj('OC')">Add Cheque</button>
+                <button class="btn btn-adj-red" onclick="processAdj('OC')">Add Cheque</button>
             </div>
-            <div class="manual-box">
-                <h3 style="color: #10b981; margin-bottom: 12px;">Deposits in Transit (+)</h3>
-                <input type="text" id="ditDesc" placeholder="Description">
+            <div class="input-group">
+                <h3 style="color: #10b981; margin-bottom: 15px; font-size: 16px;">Deposits in Transit (+)</h3>
+                <input type="text" id="ditDesc" placeholder="Description (e.g. Cash Deposit)">
                 <input type="number" id="ditAmt" placeholder="Amount">
-                <button class="btn btn-upload" style="background:#10b981" onclick="addAdj('DIT')">Add Deposit</button>
+                <button class="btn btn-adj-green" onclick="processAdj('DIT')">Add Deposit</button>
             </div>
         </div>
     </div>
 </div>
 
 <footer>
-    <div style="color: #64748b; font-weight: 600;">
-        © 2025 Developed by Talha Asif Ch. All Rights Reserved.
-    </div>
+    © 2025 Developed by Talha Asif Ch. All Rights Reserved.
 </footer>
 
 <script>
-    let bankBal = 0, ledgerBal = 0;
+    let bankTotal = 0, ledgerTotal = 0;
 
-    function updateUI() {
-        document.getElementById('adjBankBalance').innerText = `$${bankBal.toLocaleString()}`;
-        document.getElementById('adjLedgerBalance').innerText = `$${ledgerBal.toLocaleString()}`;
+    function updateBalances() {
+        document.getElementById('adjBankBalance').innerText = `$${bankTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        document.getElementById('adjLedgerBalance').innerText = `$${ledgerTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     }
 
-    function showResults() {
+    function showTable() {
         document.getElementById('resultsCard').style.display = 'block';
     }
 
     function runSample() {
         const tbody = document.querySelector('#resultsTable tbody');
         tbody.innerHTML = '';
-        bankBal = 25000; ledgerBal = 25000;
+        bankTotal = 25000.00; ledgerTotal = 25000.00;
         
-        const data = [
-            { d: '2025-04-01', s: 'Opening Balance', b: '25,000', l: '25,000', st: 'Matched' },
-            { d: '2025-04-02', s: 'Invoice #501', b: '1,200', l: '1,200', st: 'Matched' },
-            { d: '2025-04-03', s: 'Office Rent', b: '5,000', l: '5,000', st: 'Matched' },
-            { d: '2025-04-04', s: 'Customer Receipt', b: '3,450', l: '3,450', st: 'Matched' },
-            { d: '2025-04-05', s: 'Internet Bill', b: '85', l: '85', st: 'Matched' },
-            { d: '2025-04-06', s: 'Furniture Buy', b: '2,100', l: '2,100', st: 'Matched' },
-            { d: '2025-04-07', s: 'Cash Deposit', b: '8,400', l: '8,400', st: 'Matched' },
-            { d: '2025-04-08', s: 'Vendor Pay', b: '950', l: '950', st: 'Matched' },
-            { d: '2025-04-09', s: 'Courier', b: '45', l: '45', st: 'Matched' },
-            { d: '2025-04-10', s: 'Consultancy', b: '1,500', l: '1,500', st: 'Matched' },
-            { d: '2025-04-11', s: 'Tax Refund', b: '600', l: '600', st: 'Matched' },
-            { d: '2025-04-12', s: 'Bank Interest', b: '120', l: '120', st: 'Matched' },
-            { d: '2025-04-13', s: 'Unmatched: Bank Fee', b: '25', l: '0', st: 'Unmatched' },
-            { d: '2025-04-14', s: 'Unmatched: Typo', b: '1,500', l: '1,050', st: 'Unmatched' }
+        const sampleItems = [
+            { d: '2025-04-01', s: 'Opening Balance', b: 25000, l: 25000, st: 'Matched' },
+            { d: '2025-04-05', s: 'Invoice #1021', b: 2450, l: 2450, st: 'Matched' },
+            { d: '2025-04-10', s: 'Electricity Bill', b: 420, l: 420, st: 'Matched' },
+            { d: '2025-04-12', s: 'Office Rent', b: 5000, l: 5000, st: 'Matched' },
+            { d: '2025-04-13', s: 'Bank Interest', b: 15, l: 15, st: 'Matched' },
+            { d: '2025-04-14', s: 'Internet Charges', b: 80, l: 80, st: 'Matched' },
+            { d: '2025-04-15', s: 'Client Payment', b: 1200, l: 1200, st: 'Matched' },
+            { d: '2025-04-16', s: 'Petty Cash', b: 100, l: 100, st: 'Matched' },
+            { d: '2025-04-17', s: 'Service Fee', b: 50, l: 50, st: 'Matched' },
+            { d: '2025-04-18', s: 'Furniture Repair', b: 300, l: 300, st: 'Matched' },
+            { d: '2025-04-19', s: 'Stationery', b: 45, l: 45, st: 'Matched' },
+            { d: '2025-04-20', s: 'Consultancy Fee', b: 1500, l: 1500, st: 'Matched' },
+            { d: '2025-04-21', s: 'Unmatched: Bank Fee', b: 25, l: 0, st: 'Unmatched' },
+            { d: '2025-04-22', s: 'Unmatched: Discrepancy', b: 1000, l: 850, st: 'Unmatched' }
         ];
 
-        data.forEach(item => {
+        sampleItems.forEach(item => {
             const row = tbody.insertRow();
             row.className = item.st === 'Matched' ? 'matched-row' : 'unmatched-row';
-            row.innerHTML = `<td>${item.d}</td><td>${item.s}</td><td>${item.b}</td><td>${item.l}</td><td style="color:${item.st === 'Matched' ? '#16a34a' : '#dc2626'}">● ${item.st}</td>`;
+            row.innerHTML = `
+                <td>${item.d}</td>
+                <td>${item.s}</td>
+                <td>${item.b.toLocaleString()}</td>
+                <td>${item.l > 0 ? item.l.toLocaleString() : '-'}</td>
+                <td style="color:${item.st === 'Matched' ? '#16a34a' : '#dc2626'}; font-weight:700;">● ${item.st}</td>
+            `;
         });
-        updateUI();
-        showResults();
+        updateBalances();
+        showTable();
     }
 
-    function addAdj(type) {
+    function processAdj(type) {
         const tbody = document.querySelector('#resultsTable tbody');
         const row = tbody.insertRow();
+        const date = new Date().toISOString().split('T')[0];
+        
         if (type === 'OC') {
-            const val = parseFloat(document.getElementById('ocAmt').value) || 0;
-            bankBal -= val;
-            row.innerHTML = `<td>2025-04-22</td><td>${document.getElementById('ocDesc').value}</td><td>(${val})</td><td>-</td><td style="color:#ef4444">● Adj</td>`;
+            const desc = document.getElementById('ocDesc').value || "Outstanding Cheque";
+            const amt = parseFloat(document.getElementById('ocAmt').value) || 0;
+            bankTotal -= amt;
+            row.innerHTML = `<td>${date}</td><td>${desc}</td><td>(${amt.toLocaleString()})</td><td>-</td><td style="color:#ef4444">● Adjustment</td>`;
         } else {
-            const val = parseFloat(document.getElementById('ditAmt').value) || 0;
-            bankBal += val;
-            row.innerHTML = `<td>2025-04-22</td><td>${document.getElementById('ditDesc').value}</td><td>${val}</td><td>-</td><td style="color:#10b981">● Adj</td>`;
+            const desc = document.getElementById('ditDesc').value || "Deposit in Transit";
+            const amt = parseFloat(document.getElementById('ditAmt').value) || 0;
+            bankTotal += amt;
+            row.innerHTML = `<td>${date}</td><td>${desc}</td><td>${amt.toLocaleString()}</td><td>-</td><td style="color:#10b981">● Adjustment</td>`;
         }
-        updateUI();
-        showResults();
-    }
-
-    function exportCSV() {
-        let csv = [];
-        const rows = document.querySelectorAll("table tr");
-        rows.forEach(r => {
-            let row = [];
-            r.querySelectorAll("td, th").forEach(c => row.push('"' + c.innerText + '"'));
-            csv.push(row.join(","));
-        });
-        const blob = new Blob([csv.join("\n")], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url; a.download = "Reconciliation_2025.csv"; a.click();
+        updateBalances();
+        showTable();
     }
 
     function exportExcel() {
         const wb = XLSX.utils.table_to_book(document.getElementById('resultsTable'));
-        XLSX.writeFile(wb, "Reconciliation_2025.xlsx");
+        XLSX.writeFile(wb, "Talha_Reconciliation_Report.xlsx");
     }
 </script>
 </body>
