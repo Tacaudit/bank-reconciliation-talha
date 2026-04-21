@@ -10,95 +10,92 @@
 <style>
     :root {
         --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-        --btn-hover-gradient: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+        --hover-gradient: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
         --primary: #4f46e5;
         --secondary: #7c3aed;
-        --bg-body: #f1f5f9;
+        --bg: #f8fafc;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-body); color: #1e293b; line-height: 1.6; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: var(--bg); color: #1e293b; line-height: 1.6; }
 
     header {
         background: var(--primary-gradient);
         color: white;
-        padding: 60px 20px;
+        padding: 50px 20px;
         text-align: center;
-        box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
 
-    .bank-icon { font-size: 70px; margin-bottom: 10px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
-    header h1 { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
-    header p { opacity: 0.9; font-size: 18px; margin-top: 5px; font-weight: 400; }
+    .bank-icon { font-size: 60px; margin-bottom: 10px; display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+    header h1 { font-size: 34px; font-weight: 800; letter-spacing: -0.5px; }
+    header p { opacity: 0.9; font-size: 18px; margin-top: 5px; }
 
-    .container { max-width: 1200px; margin: -50px auto 60px; padding: 0 25px; }
+    .container { max-width: 1100px; margin: -40px auto 60px; padding: 0 20px; }
     
     .card {
         background: white;
         border-radius: 20px;
-        padding: 35px;
-        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-        margin-bottom: 30px;
-        border: 1px solid rgba(255,255,255,0.3);
+        padding: 30px;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
     }
 
-    h2 { color: var(--primary); margin-bottom: 25px; font-size: 24px; display: flex; align-items: center; gap: 10px; }
-    h2::before { content: ''; width: 4px; height: 24px; background: var(--secondary); border-radius: 10px; display: inline-block; }
-
-    .file-info {
-        background: #eff6ff;
+    /* Requirement Info Box - EXACTLY LIKE SCREENSHOT */
+    .info-box {
+        background-color: #eff6ff;
         border: 1px solid #bfdbfe;
-        color: #1e40af;
-        padding: 12px 15px;
-        border-radius: 10px;
-        font-size: 14px;
-        margin-bottom: 20px;
+        border-radius: 12px;
+        padding: 15px 20px;
         display: flex;
-        align-items: center;
-        gap: 10px;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 25px;
     }
+    .info-icon { font-size: 20px; margin-top: 2px; }
+    .info-content { color: #1e40af; font-size: 14px; }
+    .info-content strong { color: #1e3a8a; display: block; margin-bottom: 2px; }
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    h2 { color: var(--primary); margin-bottom: 20px; font-size: 22px; display: flex; align-items: center; gap: 10px; }
 
-    .upload-zone {
-        border: 2px dashed #cbd5e1;
-        padding: 20px;
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    .upload-area {
+        border: 2px dashed #e2e8f0;
+        padding: 25px;
         border-radius: 15px;
         text-align: center;
         transition: 0.3s;
     }
-    .upload-zone:hover { border-color: var(--primary); background: #f8fafc; }
+    .upload-area:hover { border-color: var(--primary); background: #f1f5f9; }
 
-    label { display: block; font-weight: 700; margin-bottom: 10px; color: #334155; }
+    label { display: block; font-weight: 700; margin-bottom: 10px; color: #475569; }
     input[type="text"], input[type="number"] {
-        width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 15px; font-size: 16px; transition: 0.3s;
+        width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 15px; font-size: 15px;
     }
-    input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
 
-    /* Stylish Interactive Buttons */
+    /* Interactive Buttons */
     .btn {
-        padding: 16px 32px; border: none; border-radius: 12px; cursor: pointer; 
-        font-weight: 800; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        display: inline-block; text-transform: uppercase; letter-spacing: 1px;
-        font-size: 14px; text-align: center;
+        padding: 15px 25px; border: none; border-radius: 12px; cursor: pointer; 
+        font-weight: 800; transition: 0.3s ease; display: inline-block;
+        text-transform: uppercase; font-size: 14px; text-align: center;
     }
-    .btn-main { background: var(--primary-gradient); color: white; width: 100%; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); }
-    .btn-add { background: #10b981; color: white; width: 100%; margin-top: 5px; }
-    .btn:hover { transform: scale(1.02) translateY(-3px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-    .btn:active { transform: scale(0.98); }
+    .btn-main { background: var(--primary-gradient); color: white; width: 100%; margin-top: 10px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+    .btn-add { background: #10b981; color: white; width: 100%; }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+    .btn:active { transform: translateY(0); }
 
-    .adj-container { background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; }
+    .manual-box { background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0; }
     
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th { text-align: left; padding: 12px; color: #64748b; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
-    td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #1e293b; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th { text-align: left; padding: 10px; color: #64748b; font-size: 12px; border-bottom: 2px solid #e2e8f0; }
+    td { padding: 10px; border-bottom: 1px solid #f1f5f9; font-weight: 600; }
 
-    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-    .summary-card { background: #1e293b; color: white; padding: 30px; border-radius: 18px; text-align: center; border-bottom: 6px solid var(--secondary); }
-    .summary-card p { font-size: 14px; text-transform: uppercase; opacity: 0.7; letter-spacing: 1px; }
-    .summary-card .value { font-size: 32px; font-weight: 900; color: #ddd6fe; margin-top: 10px; }
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .summary-card { background: #1e293b; color: white; padding: 25px; border-radius: 15px; text-align: center; border-bottom: 5px solid var(--secondary); }
+    .summary-card span { display: block; font-size: 28px; font-weight: 800; color: #c4b5fd; margin-top: 5px; }
 
-    footer { text-align: center; padding-bottom: 40px; color: #94a3b8; font-weight: 500; }
+    footer { text-align: center; padding: 30px; color: #94a3b8; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -113,45 +110,48 @@
     <div class="card">
         <h2>Step 1: Automated Data Import</h2>
         
-        <div class="file-info">
-            <span>ℹ️</span> 
-            <strong>Requirement:</strong> Upload files in .xlsx, .xls or .csv format. Ensure columns for Date, Description, and Amount are present.
+        <div class="info-box">
+            <div class="info-icon">ℹ️</div>
+            <div class="info-content">
+                <strong>Requirement:</strong>
+                Upload files in .xlsx, .xls or .csv format. Ensure columns for Date, Description, and Amount are present.
+            </div>
         </div>
 
         <div class="grid">
-            <div class="upload-zone">
+            <div class="upload-area">
                 <label>Bank Statement</label>
                 <input type="file" id="bankFile" accept=".xlsx, .xls, .csv">
             </div>
-            <div class="upload-zone">
+            <div class="upload-area">
                 <label>Company Ledger</label>
                 <input type="file" id="ledgerFile" accept=".xlsx, .xls, .csv">
             </div>
         </div>
-        <button class="btn btn-main" style="margin-top: 30px;">⚡ Run Online Reconciliation</button>
+        <button class="btn btn-main">⚡ Run Online Reconciliation</button>
     </div>
 
     <div class="card">
         <h2>Step 2: Manual Entry & Adjustments</h2>
         <div class="grid">
-            <div class="adj-container">
-                <h3 style="color: #ef4444; margin-bottom: 15px;">Outstanding Cheques (-)</h3>
-                <input type="text" id="ocDesc" placeholder="e.g. Cheque #405">
-                <input type="number" id="ocAmt" placeholder="Amount (No symbols)">
-                <button class="btn btn-add" onclick="addEntry('oc')">Add to List</button>
+            <div class="manual-box">
+                <h3 style="color: #ef4444; margin-bottom: 12px; font-size: 16px;">Outstanding Cheques (-)</h3>
+                <input type="text" id="ocDesc" placeholder="Description">
+                <input type="number" id="ocAmt" placeholder="Amount">
+                <button class="btn btn-add" onclick="addRow('oc')">Add to List</button>
                 <table id="ocTable">
-                    <thead><tr><th>Description</th><th>Amount</th></tr></thead>
+                    <thead><tr><th>Desc</th><th>Amount</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
 
-            <div class="adj-container">
-                <h3 style="color: #10b981; margin-bottom: 15px;">Deposits in Transit (+)</h3>
-                <input type="text" id="ditDesc" placeholder="e.g. Cash Deposit">
-                <input type="number" id="ditAmt" placeholder="Amount (No symbols)">
-                <button class="btn btn-add" onclick="addEntry('dit')">Add to List</button>
+            <div class="manual-box">
+                <h3 style="color: #10b981; margin-bottom: 12px; font-size: 16px;">Deposits in Transit (+)</h3>
+                <input type="text" id="ditDesc" placeholder="Description">
+                <input type="number" id="ditAmt" placeholder="Amount">
+                <button class="btn btn-add" onclick="addRow('dit')">Add to List</button>
                 <table id="ditTable">
-                    <thead><tr><th>Description</th><th>Amount</th></tr></thead>
+                    <thead><tr><th>Desc</th><th>Amount</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -160,36 +160,32 @@
 
     <div class="summary-grid">
         <div class="summary-card">
-            <p>Adjusted Bank Balance</p>
-            <div class="value" id="resBank">0.00</div>
+            Adjusted Bank Balance
+            <span id="bankBal">0.00</span>
         </div>
         <div class="summary-card">
-            <p>Adjusted Ledger Balance</p>
-            <div class="value" id="resLedger">0.00</div>
+            Adjusted Ledger Balance
+            <span id="ledgerBal">0.00</span>
         </div>
     </div>
 </div>
 
-<footer>
-    Designed & Developed by Talha Asif Ch
-</footer>
+<footer>Designed & Developed by Talha Asif Ch</footer>
 
 <script>
-    function addEntry(type) {
-        const descInput = document.getElementById(type + 'Desc');
-        const amtInput = document.getElementById(type + 'Amt');
-        
-        if (!descInput.value || !amtInput.value) return;
+    function addRow(type) {
+        const desc = document.getElementById(type + 'Desc').value;
+        const amt = document.getElementById(type + 'Amt').value;
+        if (!desc || !amt) return;
 
         const table = document.getElementById(type + 'Table').getElementsByTagName('tbody')[0];
         const row = table.insertRow();
-        
-        row.insertCell(0).innerText = descInput.value;
-        // Amount formatted with commas but NO dollar sign
-        row.insertCell(1).innerText = parseFloat(amtInput.value).toLocaleString(undefined, {minimumFractionDigits: 2});
+        row.insertCell(0).innerText = desc;
+        // Format with commas, NO dollar sign
+        row.insertCell(1).innerText = parseFloat(amt).toLocaleString(undefined, {minimumFractionDigits: 2});
 
-        descInput.value = '';
-        amtInput.value = '';
+        document.getElementById(type + 'Desc').value = '';
+        document.getElementById(type + 'Amt').value = '';
     }
 </script>
 </body>
