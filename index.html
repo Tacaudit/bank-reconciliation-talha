@@ -10,25 +10,39 @@
         :root { --primary: #6366f1; --secondary: #a855f7; --dark: #1e293b; --success: #10b981; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+
         header { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; padding: 60px 20px 100px; text-align: center; }
         header h1 { font-size: 34px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+
         .container { max-width: 1100px; margin: -60px auto 60px; padding: 0 20px; }
-        .card { background: white; border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .info-banner { background: #f4f7ff; border-left: 4px solid var(--primary); border-radius: 8px; padding: 15px 20px; margin-bottom: 25px; font-size: 13px; }
-        .tag { background: white; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; font-family: monospace; font-weight: bold; }
-        .btn-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-        .btn { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .card { background: white; border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 25px; position: relative; }
+
+        .info-banner { background: #f4f7ff; border-left: 4px solid var(--primary); border-radius: 8px; padding: 15px 20px; margin-bottom: 25px; font-size: 13px; line-height: 1.6; }
+        .tag { background: white; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; font-family: monospace; font-weight: bold; color: var(--primary); }
+
+        .btn-container { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+        .upload-wrapper { flex: 1; min-width: 200px; }
+        .btn { width: 100%; padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-upload { background: var(--primary); color: white; }
         .btn-recon { background: var(--success); color: white; }
+        .btn-sample { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
         .btn-reset { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
+        .file-name { display: block; font-size: 11px; color: #64748b; margin-top: 5px; font-style: italic; text-align: center; }
+
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { text-align: left; padding: 12px; background: #f8fafc; color: #64748b; font-size: 11px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
         td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
         .matched { background-color: #f0fdf4; color: #16a34a; font-weight: 700; }
         .unmatched { background-color: #fef2f2; color: #dc2626; font-weight: 700; }
+
         .balance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
-        .balance-card { background: var(--dark); color: white; padding: 30px; border-radius: 16px; text-align: center; border-bottom: 4px solid var(--primary); }
-        .balance-value { font-size: 36px; font-weight: bold; color: #818cf8; margin-top: 5px; }
+        .balance-card { background: var(--dark); color: white; padding: 35px; border-radius: 16px; text-align: center; border-bottom: 4px solid var(--primary); }
+        .balance-value { font-size: 42px; font-weight: bold; color: #818cf8; margin-top: 10px; }
+
+        .adj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .adj-box { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; }
+
         footer { text-align: center; padding: 40px; color: #64748b; font-weight: 600; }
     </style>
 </head>
@@ -36,26 +50,42 @@
 
 <header>
     <h1><i class="fas fa-university"></i> Bank Reconciliation by Talha Asif Ch</h1>
+    <p>Professional Online Version</p>
 </header>
 
 <div class="container">
     <div class="card">
         <h2>Step 1: Data Import</h2>
         <div class="info-banner">
-            <strong>Required columns:</strong> <span class="tag">Date</span>, <span class="tag">Description</span>, <span class="tag">Amount</span>
+            <strong>Supported formats:</strong> <span class="tag">.csv</span> <span class="tag">.xlsx</span> • 
+            <strong>Required columns:</strong> <span class="tag">Date</span> <span class="tag">Description</span> <span class="tag">Amount</span>
         </div>
+        
         <div class="btn-container">
-            <button class="btn btn-upload" onclick="document.getElementById('bFile').click()">📄 Upload Bank File</button>
-            <button class="btn btn-upload" onclick="document.getElementById('lFile').click()">📒 Upload Ledger File</button>
-            <button class="btn btn-recon" onclick="processFiles()">⚡ Run Reconciliation</button>
+            <div class="upload-wrapper">
+                <button class="btn btn-upload" onclick="document.getElementById('bIn').click()">📄 Bank File</button>
+                <span id="bName" class="file-name">No file selected</span>
+            </div>
+            <div class="upload-wrapper">
+                <button class="btn btn-upload" onclick="document.getElementById('lIn').click()">📒 Ledger File</button>
+                <span id="lName" class="file-name">No file selected</span>
+            </div>
+            <button class="btn btn-recon" onclick="runReconciliation()">⚡ Run Reconciliation</button>
+            <button class="btn btn-sample" onclick="loadSample()">Load Sample Data</button>
             <button class="btn btn-reset" onclick="location.reload()">Reset</button>
         </div>
-        <input type="file" id="bFile" style="display:none" accept=".xlsx, .xls, .csv">
-        <input type="file" id="lFile" style="display:none" accept=".xlsx, .xls, .csv">
+
+        <input type="file" id="bIn" style="display:none" onchange="updateFileName('bIn', 'bName')">
+        <input type="file" id="lIn" style="display:none" onchange="updateFileName('lIn', 'lName')">
     </div>
 
     <div class="card" id="resultsCard" style="display:none;">
-        <h3>Matching Results</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3>Reconciliation Results</h3>
+            <div>
+                <button class="btn btn-sample" style="display:inline-flex; width:auto; font-size:12px;" onclick="exportExcel()">Export Excel</button>
+            </div>
+        </div>
         <table id="reconTable">
             <thead>
                 <tr><th>Date</th><th>Description</th><th>Bank Amt</th><th>Ledger Amt</th><th>Status</th></tr>
@@ -65,12 +95,28 @@
 
         <div class="balance-grid">
             <div class="balance-card">
-                <p style="font-size:11px; color:#94a3b8;">ADJUSTED BANK BALANCE</p>
+                <p style="font-size:12px; color:#94a3b8; letter-spacing:1px; font-weight:bold;">ADJUSTED BANK BALANCE</p>
                 <div id="bBal" class="balance-value">$0.00</div>
             </div>
             <div class="balance-card">
-                <p style="font-size:11px; color:#94a3b8;">ADJUSTED LEDGER BALANCE</p>
+                <p style="font-size:12px; color:#94a3b8; letter-spacing:1px; font-weight:bold;">ADJUSTED LEDGER BALANCE</p>
                 <div id="lBal" class="balance-value">$0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 style="margin-bottom:20px; border-left:4px solid var(--primary); padding-left:15px;">Step 2: Manual Adjustments</h2>
+        <div class="adj-grid">
+            <div class="adj-box">
+                <h4 style="color:#ef4444; margin-bottom:12px;">Outstanding Cheques (-)</h4>
+                <input type="text" id="ocD" placeholder="Description"><input type="number" id="ocA" placeholder="Amount">
+                <button class="btn" style="background:#ef4444; color:white;" onclick="addAdj('OC')">Add Adjustment</button>
+            </div>
+            <div class="adj-box">
+                <h4 style="color:#10b981; margin-bottom:12px;">Deposits in Transit (+)</h4>
+                <input type="text" id="ditD" placeholder="Description"><input type="number" id="ditA" placeholder="Amount">
+                <button class="btn" style="background:#10b981; color:white;" onclick="addAdj('DIT')">Add Adjustment</button>
             </div>
         </div>
     </div>
@@ -79,9 +125,13 @@
 <footer>Designed & Developed by Talha Asif Ch</footer>
 
 <script>
-    let bankData = [], ledgerData = [];
+    let currentBankTotal = 0, currentLedgerTotal = 0;
 
-    // Helper to read files
+    function updateFileName(inputId, labelId) {
+        const file = document.getElementById(inputId).files[0];
+        document.getElementById(labelId).innerText = file ? file.name : "No file selected";
+    }
+
     async function readFile(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -94,40 +144,86 @@
         });
     }
 
-    async function processFiles() {
-        const bInput = document.getElementById('bFile').files[0];
-        const lInput = document.getElementById('lFile').files[0];
+    async function runReconciliation() {
+        const bFile = document.getElementById('bIn').files[0];
+        const lFile = document.getElementById('lIn').files[0];
 
-        if (!bInput || !lInput) {
-            alert("Please upload both Bank and Ledger files first!");
-            return;
-        }
+        if (!bFile || !lFile) return alert("Please upload both files first!");
 
-        bankData = await readFile(bInput);
-        ledgerData = await readFile(lInput);
-        
+        const bankJson = await readFile(bFile);
+        const ledgerJson = await readFile(lFile);
+        processRecon(bankJson, ledgerJson);
+    }
+
+    function processRecon(bank, ledger) {
         const tbody = document.querySelector('#reconTable tbody');
         tbody.innerHTML = '';
-        let bTotal = 0, lTotal = 0;
+        currentBankTotal = 0; currentLedgerTotal = 0;
 
-        // reconciliation logic: Match by Amount
-        bankData.forEach(bRow => {
+        bank.forEach(bRow => {
             const bAmt = parseFloat(bRow.Amount || 0);
-            bTotal += bAmt;
-            const match = ledgerData.find(lRow => parseFloat(lRow.Amount) === bAmt);
+            currentBankTotal += bAmt;
+            const matchIndex = ledger.findIndex(lRow => parseFloat(lRow.Amount) === bAmt);
             
             const tr = tbody.insertRow();
-            if (match) {
-                lTotal += parseFloat(match.Amount);
-                tr.innerHTML = `<td>${bRow.Date}</td><td>${bRow.Description}</td><td>${bAmt}</td><td>${match.Amount}</td><td class="matched">● Matched</td>`;
+            if (matchIndex !== -1) {
+                const match = ledger.splice(matchIndex, 1)[0];
+                currentLedgerTotal += parseFloat(match.Amount);
+                tr.innerHTML = `<td>${bRow.Date}</td><td>${bRow.Description}</td><td>${bAmt.toLocaleString()}</td><td>${parseFloat(match.Amount).toLocaleString()}</td><td class="matched">● Matched</td>`;
             } else {
-                tr.innerHTML = `<td>${bRow.Date}</td><td>${bRow.Description}</td><td>${bAmt}</td><td>-</td><td class="unmatched">● Unmatched</td>`;
+                tr.innerHTML = `<td>${bRow.Date}</td><td>${bRow.Description}</td><td>${bAmt.toLocaleString()}</td><td>-</td><td class="unmatched">● Unmatched</td>`;
             }
         });
 
-        document.getElementById('bBal').innerText = `$${bTotal.toLocaleString()}`;
-        document.getElementById('lBal').innerText = `$${lTotal.toLocaleString()}`;
+        // Add remaining ledger items as unmatched
+        ledger.forEach(lRow => {
+            const lAmt = parseFloat(lRow.Amount || 0);
+            const tr = tbody.insertRow();
+            tr.innerHTML = `<td>${lRow.Date}</td><td>${lRow.Description}</td><td>-</td><td>${lAmt.toLocaleString()}</td><td class="unmatched">● Unmatched</td>`;
+        });
+
+        updateUI();
+    }
+
+    function loadSample() {
+        const sampleBank = [
+            {Date:'2026-04-01', Description:'Opening Bal', Amount:15000},
+            {Date:'2026-04-13', Description:'Bank Deposit - Faisalabad Branch', Amount:26000},
+            {Date:'2026-04-14', Description:'Bank Service Fee', Amount:25}
+        ];
+        const sampleLedger = [
+            {Date:'2026-04-01', Description:'Opening Bal', Amount:15000},
+            {Date:'2026-04-13', Description:'Branch Deposit', Amount:26000}
+        ];
+        processRecon(sampleBank, sampleLedger);
+    }
+
+    function addAdj(type) {
+        const amt = type === 'OC' ? parseFloat(document.getElementById('ocA').value) : parseFloat(document.getElementById('ditA').value);
+        const desc = type === 'OC' ? document.getElementById('ocD').value : document.getElementById('ditD').value;
+        if (!amt) return;
+
+        const tbody = document.querySelector('#reconTable tbody');
+        const tr = tbody.insertRow();
+        if (type === 'OC') {
+            currentBankTotal -= amt;
+            tr.innerHTML = `<td>-</td><td>${desc}</td><td>(${amt.toLocaleString()})</td><td>-</td><td class="unmatched">● Adjustment</td>`;
+        } else {
+            currentBankTotal += amt;
+            tr.innerHTML = `<td>-</td><td>${desc}</td><td>${amt.toLocaleString()}</td><td>-</td><td class="matched">● Adjustment</td>`;
+        }
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('bBal').innerText = `$${currentBankTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        document.getElementById('lBal').innerText = `$${currentLedgerTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
         document.getElementById('resultsCard').style.display = 'block';
+    }
+
+    function exportExcel() {
+        const wb = XLSX.utils.table_to_book(document.getElementById('reconTable'));
+        XLSX.writeFile(wb, "Talha_Recon_Result.xlsx");
     }
 </script>
 </body>
