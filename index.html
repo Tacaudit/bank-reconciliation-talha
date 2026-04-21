@@ -45,13 +45,12 @@
         text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex;
         align-items: center; justify-content: center; gap: 8px;
     }
-    .btn-upload { background: #f8fafc; color: #64748b; border: 2px dashed #cbd5e1; width: 100%; }
-    .btn-upload:hover { border-color: #4f46e5; background: #eff6ff; color: #4f46e5; }
+    .btn-upload { background: #4f46e5; color: white; width: 100%; }
+    .btn-upload:hover { background: #4338ca; }
     
-    .btn-main { background: var(--primary-gradient); color: white; width: 100%; margin-top: 15px; }
+    .btn-main { background: #10b981; color: white; width: 100%; margin-top: 15px; }
     .btn-sample { background: #6366f1; color: white; width: 100%; margin-top: 10px; }
     .btn-download { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; font-size: 12px; padding: 10px 15px; }
-    .btn-add { background: #10b981; color: white; width: 100%; margin-top: 10px; }
 
     /* Results Table */
     .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -61,7 +60,6 @@
     td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 500; }
     .matched-row { background-color: #f0fdf4; }
 
-    /* Manual Adjustments */
     .manual-box { background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0; }
     input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; font-size: 14px; }
 
@@ -70,20 +68,10 @@
         border-radius: 12px; text-align: center; margin-bottom: 20px; font-weight: 700;
     }
 
-    /* Professional Footer with Copyright Icon */
     footer {
-        text-align: center;
-        padding: 40px 20px;
-        background: white;
-        border-top: 1px solid #e2e8f0;
-        margin-top: auto;
+        text-align: center; padding: 40px 20px; background: white; border-top: 1px solid #e2e8f0; margin-top: auto;
     }
-    .copyright-text {
-        color: #64748b;
-        font-size: 15px;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-    }
+    .copyright-text { color: #64748b; font-size: 15px; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -95,7 +83,7 @@
 </header>
 
 <div class="container">
-    <div id="statusMsg">✅ Reconciliation Processed Successfully!</div>
+    <div id="statusMsg">✅ Reconciliation Done: Results Ready Below!</div>
 
     <div class="card">
         <h2>Step 1: Automated Data Import</h2>
@@ -107,22 +95,22 @@
         </div>
 
         <div class="grid">
-            <button class="btn btn-upload" onclick="document.getElementById('bankFile').click()">📄 Upload Bank Statement</button>
-            <button class="btn btn-upload" onclick="document.getElementById('ledgerFile').click()">📒 Upload Company Ledger</button>
+            <button class="btn btn-upload" onclick="document.getElementById('bankFile').click()">📄 Upload Bank File</button>
+            <button class="btn btn-upload" onclick="document.getElementById('ledgerFile').click()">📒 Upload Ledger File</button>
         </div>
         <input type="file" id="bankFile" style="display:none">
         <input type="file" id="ledgerFile" style="display:none">
         
         <button class="btn btn-main" onclick="showResults()">⚡ Run Online Reconciliation</button>
-        <button class="btn btn-sample" onclick="runSample()">📂 Run Sample Data</button>
+        <button class="btn btn-sample" onclick="runSample()">📂 Load Sample Data</button>
     </div>
 
     <div class="card" id="resultsCard" style="display: none;">
         <div class="results-header">
             <h3>Matching Results</h3>
             <div style="display: flex; gap: 10px;">
-                <button class="btn btn-download" onclick="alert('Exporting CSV...')">📥 CSV</button>
-                <button class="btn btn-download" onclick="alert('Exporting Excel...')">📊 Excel</button>
+                <button class="btn btn-download" onclick="exportToCSV()">📄 CSV</button>
+                <button class="btn btn-download" onclick="exportToExcel()">📊 EXCEL</button>
             </div>
         </div>
         <div class="table-container">
@@ -145,16 +133,14 @@
         <h2>Step 2: Manual Adjustments</h2>
         <div class="grid">
             <div class="manual-box">
-                <h3 style="color: #ef4444; margin-bottom: 12px; font-size: 16px;">Outstanding Cheques (-)</h3>
-                <input type="text" id="ocDesc" placeholder="e.g. Cheque #405">
-                <input type="number" id="ocAmt" placeholder="Amount (no symbols)">
-                <button class="btn btn-add" onclick="alert('Entry Added')">Add Entry</button>
+                <h3 style="color: #ef4444; margin-bottom: 12px;">Outstanding Cheques (-)</h3>
+                <input type="text" placeholder="Description">
+                <input type="number" placeholder="Amount">
             </div>
             <div class="manual-box">
-                <h3 style="color: #10b981; margin-bottom: 12px; font-size: 16px;">Deposits in Transit (+)</h3>
-                <input type="text" id="ditDesc" placeholder="e.g. Cash Deposit">
-                <input type="number" id="ditAmt" placeholder="Amount (no symbols)">
-                <button class="btn btn-add" onclick="alert('Entry Added')">Add Entry</button>
+                <h3 style="color: #10b981; margin-bottom: 12px;">Deposits in Transit (+)</h3>
+                <input type="text" placeholder="Description">
+                <input type="number" placeholder="Amount">
             </div>
         </div>
     </div>
@@ -162,7 +148,7 @@
 
 <footer>
     <div class="copyright-text">
-        © 2026 Developed by Talha Asif Ch. All Rights Reserved.
+        © 2025 Developed by Talha Asif Ch. All Rights Reserved.
     </div>
 </footer>
 
@@ -170,28 +156,50 @@
     function showResults() {
         document.getElementById('resultsCard').style.display = 'block';
         document.getElementById('statusMsg').style.display = 'block';
-        document.getElementById('statusMsg').innerText = "✅ Reconciliation Done: Results Ready Below!";
         window.scrollTo({ top: document.getElementById('resultsCard').offsetTop - 20, behavior: 'smooth' });
     }
 
     function runSample() {
         const tbody = document.querySelector('#resultsTable tbody');
         tbody.innerHTML = '';
-        
         const sampleData = [
-            { date: '2026-04-01', desc: 'Opening Balance', bank: '15,000.00', ledger: '15,000.00', status: 'Matched' },
-            { date: '2026-04-05', desc: 'Inv #1021 - Al-Noor Traders', bank: '2,450.00', ledger: '2,450.00', status: 'Matched' },
-            { date: '2026-04-12', desc: 'Electricity Bill', bank: '420.00', ledger: '420.00', status: 'Matched' },
-            { date: '2026-04-20', desc: 'Deposit - Faisalabad Branch', bank: '12,000.00', ledger: '12,000.00', status: 'Matched' }
+            { date: '2025-04-01', desc: 'Opening Balance', bank: '15,000.00', ledger: '15,000.00', status: 'Matched' },
+            { date: '2025-04-05', desc: 'Inv #1021 - Al-Noor Traders', bank: '2,450.00', ledger: '2,450.00', status: 'Matched' },
+            { date: '2025-04-12', desc: 'Electricity Bill', bank: '420.00', ledger: '420.00', status: 'Matched' },
+            { date: '2025-04-20', desc: 'Deposit - Faisalabad Branch', bank: '12,000.00', ledger: '12,000.00', status: 'Matched' }
         ];
-
         sampleData.forEach(item => {
             const row = tbody.insertRow();
             row.className = 'matched-row';
             row.innerHTML = `<td>${item.date}</td><td>${item.desc}</td><td>${item.bank}</td><td>${item.ledger}</td><td style="color:#16a34a">● ${item.status}</td>`;
         });
-
         showResults();
+    }
+
+    // Functional CSV Export
+    function exportToCSV() {
+        const table = document.getElementById("resultsTable");
+        let csv = [];
+        const rows = table.querySelectorAll("tr");
+        for (let i = 0; i < rows.length; i++) {
+            const row = [], cols = rows[i].querySelectorAll("td, th");
+            for (let j = 0; j < cols.length; j++) row.push('"' + cols[j].innerText + '"');
+            csv.push(row.join(","));
+        }
+        const csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+        const downloadLink = document.createElement("a");
+        downloadLink.download = "Bank_Reconciliation_2025.csv";
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+    }
+
+    // Functional Excel Export
+    function exportToExcel() {
+        const table = document.getElementById("resultsTable");
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Results" });
+        XLSX.writeFile(wb, "Bank_Reconciliation_2025.xlsx");
     }
 </script>
 </body>
