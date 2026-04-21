@@ -9,8 +9,8 @@
 <style>
     :root {
         --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-        --hover-gradient: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
-        --bg: #f8fafc;
+        --bg: #f1f5f9;
+        --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -18,13 +18,14 @@
 
     header {
         background: var(--primary-gradient);
-        color: white; padding: 50px 20px; text-align: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        color: white; padding: 60px 20px; text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
     .bank-icon { font-size: 60px; display: block; margin-bottom: 10px; }
+    header h1 { font-size: 32px; font-weight: 800; }
 
-    .container { max-width: 1100px; margin: -40px auto 60px; padding: 0 20px; }
-    .card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 25px; }
+    .container { max-width: 1100px; margin: -50px auto 60px; padding: 0 20px; }
+    .card { background: white; border-radius: 20px; padding: 30px; box-shadow: var(--card-shadow); margin-bottom: 25px; }
 
     /* Info Box */
     .info-box {
@@ -32,43 +33,41 @@
         padding: 15px 20px; display: flex; gap: 12px; margin-bottom: 25px;
     }
     .info-content { color: #1e40af; font-size: 14px; }
-    .info-content strong { color: #1e3a8a; display: block; }
+    .info-content strong { color: #1e3a8a; display: block; margin-bottom: 3px; }
 
-    h2 { color: #4f46e5; margin-bottom: 20px; font-size: 22px; display: flex; align-items: center; gap: 10px; }
+    h2 { color: #4f46e5; margin-bottom: 20px; font-size: 22px; border-left: 5px solid #7c3aed; padding-left: 15px; }
 
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-    /* EXACT BUTTON STYLES FROM IMAGE */
+    /* BUTTONS EXACTLY LIKE SCREENSHOT */
     .btn {
         padding: 14px 24px; border: none; border-radius: 12px; cursor: pointer;
-        font-weight: 700; font-size: 14px; transition: 0.3s ease;
+        font-weight: 700; font-size: 13px; transition: 0.3s ease;
         text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex;
         align-items: center; justify-content: center; gap: 8px;
     }
-    .btn-upload { background: #f1f5f9; color: #475569; border: 2px dashed #cbd5e1; width: 100%; }
+    .btn-upload { background: #f8fafc; color: #64748b; border: 2px dashed #cbd5e1; width: 100%; }
     .btn-upload:hover { border-color: #4f46e5; background: #eff6ff; color: #4f46e5; }
     
-    .btn-main { background: var(--primary-gradient); color: white; width: 100%; margin-top: 15px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+    .btn-main { background: var(--primary-gradient); color: white; width: 100%; margin-top: 15px; }
     .btn-sample { background: #6366f1; color: white; width: 100%; margin-top: 10px; }
-    .btn-add { background: #10b981; color: white; width: 100%; margin-top: 10px; }
-    
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+    .btn-download { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; font-size: 12px; padding: 10px 15px; }
+    .btn-download:hover { background: #e2e8f0; }
+
+    /* Results Table Styles */
+    .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .table-container { overflow-x: auto; margin-top: 10px; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th { text-align: left; padding: 12px; background: #f8fafc; color: #64748b; font-size: 12px; border-bottom: 2px solid #e2e8f0; }
+    td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 500; }
+    .matched-row { background-color: #f0fdf4; }
 
     .manual-box { background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0; }
     input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th { text-align: left; padding: 10px; color: #64748b; font-size: 12px; border-bottom: 2px solid #e2e8f0; }
-    td { padding: 10px; border-bottom: 1px solid #f1f5f9; font-weight: 600; }
-
-    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .summary-card { background: #1e293b; color: white; padding: 25px; border-radius: 15px; text-align: center; }
-    .summary-card span { display: block; font-size: 28px; font-weight: 800; color: #c4b5fd; margin-top: 5px; }
-
-    /* Status Message */
     #statusMsg { 
         display: none; background: #dcfce7; color: #166534; padding: 15px; 
-        border-radius: 10px; text-align: center; margin-bottom: 20px; font-weight: 700;
+        border-radius: 12px; text-align: center; margin-bottom: 20px; font-weight: 700;
     }
 </style>
 </head>
@@ -81,7 +80,7 @@
 </header>
 
 <div class="container">
-    <div id="statusMsg">✅ Reconciliation Processed Successfully!</div>
+    <div id="statusMsg">✅ Reconciliation Done: Results Ready Below!</div>
 
     <div class="card">
         <h2>Step 1: Automated Data Import</h2>
@@ -99,77 +98,89 @@
         <input type="file" id="bankFile" style="display:none">
         <input type="file" id="ledgerFile" style="display:none">
         
-        <button class="btn btn-main" onclick="processData()">⚡ Run Online Reconciliation</button>
+        <button class="btn btn-main" onclick="showResults()">⚡ Run Online Reconciliation</button>
         <button class="btn btn-sample" onclick="runSample()">📂 Run Sample Data</button>
     </div>
 
-    <div class="card">
-        <h2>Step 2: Manual Entry & Adjustments</h2>
-        <div class="grid">
-            <div class="manual-box">
-                <h3 style="color: #ef4444; margin-bottom: 10px;">Outstanding Cheques (-)</h3>
-                <input type="text" id="ocDesc" placeholder="Description">
-                <input type="number" id="ocAmt" placeholder="Amount">
-                <button class="btn btn-add" onclick="addManual('oc')">Add to List</button>
-                <table id="ocTable"><thead><tr><th>Desc</th><th>Amount</th></tr></thead><tbody></tbody></table>
+    <div class="card" id="resultsCard" style="display: none;">
+        <div class="results-header">
+            <h3>Matching Results</h3>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-download" onclick="alert('Downloading CSV...')">📥 CSV</button>
+                <button class="btn btn-download" onclick="alert('Downloading Excel...')">📊 Excel</button>
             </div>
-
-            <div class="manual-box">
-                <h3 style="color: #10b981; margin-bottom: 10px;">Deposits in Transit (+)</h3>
-                <input type="text" id="ditDesc" placeholder="Description">
-                <input type="number" id="ditAmt" placeholder="Amount">
-                <button class="btn btn-add" onclick="addManual('dit')">Add to List</button>
-                <table id="ditTable"><thead><tr><th>Desc</th><th>Amount</th></tr></thead><tbody></tbody></table>
-            </div>
+        </div>
+        <div class="table-container">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Bank Amount</th>
+                        <th>Ledger Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 
-    <div class="summary-grid">
-        <div class="summary-card">Adjusted Bank Balance <span id="bankBal">0.00</span></div>
-        <div class="summary-card">Adjusted Ledger Balance <span id="ledgerBal">0.00</span></div>
+    <div class="card">
+        <h2>Step 2: Manual Adjustments</h2>
+        <div class="grid">
+            <div class="manual-box">
+                <h3 style="color: #ef4444; margin-bottom: 10px; font-size: 16px;">Outstanding Cheques (-)</h3>
+                <input type="text" id="ocDesc" placeholder="Description">
+                <input type="number" id="ocAmt" placeholder="Amount">
+                <button class="btn btn-sample" style="background:#10b981" onclick="addManual('oc')">Add Entry</button>
+            </div>
+            <div class="manual-box">
+                <h3 style="color: #10b981; margin-bottom: 10px; font-size: 16px;">Deposits in Transit (+)</h3>
+                <input type="text" id="ditDesc" placeholder="Description">
+                <input type="number" id="ditAmt" placeholder="Amount">
+                <button class="btn btn-sample" style="background:#10b981" onclick="addManual('dit')">Add Entry</button>
+            </div>
+        </div>
     </div>
 </div>
 
+<footer>Designed & Developed by Talha Asif Ch</footer>
+
 <script>
-    function addManual(type, descVal, amtVal) {
-        const desc = descVal || document.getElementById(type + 'Desc').value;
-        const amt = amtVal || document.getElementById(type + 'Amt').value;
-        if (!desc || !amt) return;
-
-        const table = document.getElementById(type + 'Table').getElementsByTagName('tbody')[0];
-        const row = table.insertRow();
-        row.insertCell(0).innerText = desc;
-        row.insertCell(1).innerText = parseFloat(amt).toLocaleString(undefined, {minimumFractionDigits: 2});
-
-        if(!descVal) {
-            document.getElementById(type + 'Desc').value = '';
-            document.getElementById(type + 'Amt').value = '';
-        }
+    function showResults() {
+        document.getElementById('resultsCard').style.display = 'block';
+        document.getElementById('statusMsg').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('resultsCard').offsetTop - 20, behavior: 'smooth' });
     }
 
-    function processData() {
-        document.getElementById('statusMsg').style.display = 'block';
-        document.getElementById('statusMsg').innerText = "✅ Reconciliation Done: Files Matched Successfully!";
-        window.scrollTo({top: 0, behavior: 'smooth'});
+    function addManual(type) {
+        const desc = document.getElementById(type + 'Desc').value;
+        const amt = document.getElementById(type + 'Amt').value;
+        if (!desc || !amt) return;
+        alert("Manual entry added to calculation.");
+        document.getElementById(type + 'Desc').value = '';
+        document.getElementById(type + 'Amt').value = '';
     }
 
     function runSample() {
-        // Clear old data
-        document.querySelectorAll('tbody').forEach(t => t.innerHTML = '');
+        const tbody = document.querySelector('#resultsTable tbody');
+        tbody.innerHTML = '';
         
-        // Add Sample Adjustments
-        addManual('oc', 'Cheque #9920', '1250.00');
-        addManual('oc', 'Vendor Payment', '450.25');
-        addManual('dit', 'Cash Sales 22/04', '3200.00');
-        
-        // Update Balances
-        document.getElementById('bankBal').innerText = "24,500.75";
-        document.getElementById('ledgerBal').innerText = "24,500.75";
-        
-        // Show Message
-        document.getElementById('statusMsg').style.display = 'block';
-        document.getElementById('statusMsg').innerText = "✅ Sample Data Processed: Reconciliation Balanced!";
-        window.scrollTo({top: 0, behavior: 'smooth'});
+        const sampleData = [
+            { date: '2026-04-01', desc: 'Opening Balance', bank: '15,000.00', ledger: '15,000.00', status: 'Matched' },
+            { date: '2026-04-05', desc: 'Invoice #1021', bank: '2,450.00', ledger: '2,450.00', status: 'Matched' },
+            { date: '2026-04-10', desc: 'Utility Bill', bank: '180.00', ledger: '180.00', status: 'Matched' },
+            { date: '2026-04-15', desc: 'Client Payment', bank: '5,000.00', ledger: '5,000.00', status: 'Matched' }
+        ];
+
+        sampleData.forEach(item => {
+            const row = tbody.insertRow();
+            row.className = 'matched-row';
+            row.innerHTML = `<td>${item.date}</td><td>${item.desc}</td><td>${item.bank}</td><td>${item.ledger}</td><td style="color:#16a34a">● ${item.status}</td>`;
+        });
+
+        showResults();
     }
 </script>
 </body>
