@@ -29,7 +29,7 @@
         td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
         .matched { color: var(--success); font-weight: 700; }
         .unmatched { color: #ef4444; font-weight: 700; }
-        .adjustment-row { background-color: #fafafa; font-style: italic; }
+        .adj-row { background-color: #f8fafc; font-style: italic; border-left: 3px solid var(--primary); }
         .balance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
         .balance-card { background: var(--dark); color: white; padding: 35px; border-radius: 16px; text-align: center; border-bottom: 4px solid var(--primary); }
         .balance-value { font-size: 42px; font-weight: bold; color: #818cf8; margin-top: 10px; }
@@ -67,7 +67,7 @@
         <div class="btn-container">
             <button class="btn btn-recon" onclick="runReconciliation()">⚡ Run Reconciliation</button>
             <button class="btn btn-sample" onclick="loadSample()">Load Sample Data</button>
-            <button class="btn btn-reset" style="background:#fee2e2; color:#ef4444;" onclick="location.reload()">Reset</button>
+            <button class="btn" style="background:#fee2e2; color:#ef4444;" onclick="location.reload()">Reset All</button>
         </div>
 
         <input type="file" id="bIn" style="display:none" onchange="updateLabel('bIn', 'bStatus')">
@@ -76,10 +76,10 @@
 
     <div class="card" id="resultsCard" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3>Reconciliation Results</h3>
+            <h3>Results Overview</h3>
             <div style="display:flex; gap:8px;">
-                <button class="btn btn-export" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
-                <button class="btn btn-export" onclick="exportExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+                <button class="btn btn-export" onclick="exportCSV()">CSV</button>
+                <button class="btn btn-export" onclick="exportExcel()">Excel</button>
             </div>
         </div>
         <table id="reconTable">
@@ -107,12 +107,12 @@
             <div class="adj-box">
                 <h4 style="color:#ef4444; margin-bottom:12px;">Outstanding Cheques (-)</h4>
                 <input type="text" id="ocD" placeholder="Description"><input type="number" id="ocA" placeholder="Amount">
-                <button class="btn" style="background:#ef4444; color:white;" onclick="addAdj('OC')">Add to Adjustments</button>
+                <button class="btn" style="background:#ef4444; color:white;" onclick="addAdj('OC')">Apply Adjustment</button>
             </div>
             <div class="adj-box">
                 <h4 style="color:#10b981; margin-bottom:12px;">Deposits in Transit (+)</h4>
                 <input type="text" id="ditD" placeholder="Description"><input type="number" id="ditA" placeholder="Amount">
-                <button class="btn" style="background:#10b981; color:white;" onclick="addAdj('DIT')">Add to Adjustments</button>
+                <button class="btn" style="background:#10b981; color:white;" onclick="addAdj('DIT')">Apply Adjustment</button>
             </div>
         </div>
     </div>
@@ -121,43 +121,40 @@
 <footer>Designed & Developed by Talha Asif Ch</footer>
 
 <script>
-    let bankTotal = 0, ledgerTotal = 0;
+    let bT = 0, lT = 0;
 
-    function updateLabel(id, label) {
+    function updateLabel(id, labelId) {
         const file = document.getElementById(id).files[0];
-        document.getElementById(label).innerText = file ? "✅ " + file.name : "No file uploaded";
-    }
-
-    async function readFile(file) {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const wb = XLSX.read(e.target.result, { type: 'binary' });
-                resolve(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
-            };
-            reader.readAsBinaryString(file);
-        });
+        document.getElementById(labelId).innerText = file ? "✅ " + file.name : "No file uploaded";
     }
 
     async function runReconciliation() {
         const bf = document.getElementById('bIn').files[0];
         const lf = document.getElementById('lIn').files[0];
-        if(!bf || !lf) return alert("Please upload both files!");
-        const bData = await readFile(bf);
-        const lData = await readFile(lf);
-        process(bData, lData);
+        if(!bf || !lf) return alert("Please upload both files first!");
+        
+        const reader = (f) => new Promise(r => {
+            const fr = new FileReader();
+            fr.onload = (e) => {
+                const wb = XLSX.read(e.target.result, {type:'binary'});
+                r(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+            };
+            fr.readAsBinaryString(f);
+        });
+
+        process(await reader(bf), await reader(lf));
     }
 
     function process(bank, ledger) {
         const tbody = document.querySelector('#reconTable tbody');
-        tbody.innerHTML = ''; bankTotal = 0; ledgerTotal = 0;
-        
+        tbody.innerHTML = ''; bT = 0; lT = 0;
+
         bank.forEach(b => {
-            const amt = parseFloat(b.Amount || 0); bankTotal += amt;
+            const amt = parseFloat(b.Amount || 0); bT += amt;
             const matchIdx = ledger.findIndex(l => parseFloat(l.Amount) === amt);
             const tr = tbody.insertRow();
             if(matchIdx > -1) {
-                const m = ledger.splice(matchIdx, 1)[0]; ledgerTotal += amt;
+                ledger.splice(matchIdx, 1); lT += amt;
                 tr.innerHTML = `<td>${b.Date}</td><td>${b.Description}</td><td>${amt.toLocaleString()}</td><td>${amt.toLocaleString()}</td><td class="matched">● Matched</td>`;
             } else {
                 tr.innerHTML = `<td>${b.Date}</td><td>${b.Description}</td><td>${amt.toLocaleString()}</td><td>-</td><td class="unmatched">● Unmatched</td>`;
@@ -165,7 +162,7 @@
         });
 
         ledger.forEach(l => {
-            const amt = parseFloat(l.Amount || 0); ledgerTotal += amt;
+            const amt = parseFloat(l.Amount || 0); lT += amt;
             const tr = tbody.insertRow();
             tr.innerHTML = `<td>${l.Date}</td><td>${l.Description}</td><td>-</td><td>${amt.toLocaleString()}</td><td class="unmatched">● Unmatched</td>`;
         });
@@ -182,14 +179,14 @@
 
         const tbody = document.querySelector('#reconTable tbody');
         const tr = tbody.insertRow();
-        tr.className = "adjustment-row";
+        tr.className = "adj-row";
         
         if(type === 'OC') {
-            bankTotal -= amt;
-            tr.innerHTML = `<td>Adjust</td><td>${descInput.value || 'Adj'}</td><td>(${amt.toLocaleString()})</td><td>-</td><td style="color:#ef4444">● Adj Entry</td>`;
+            bT -= amt;
+            tr.innerHTML = `<td>Adjust</td><td>${descInput.value || 'Cheque'}</td><td>(${amt.toLocaleString()})</td><td>-</td><td style="color:#ef4444">Adjustment</td>`;
         } else {
-            bankTotal += amt;
-            tr.innerHTML = `<td>Adjust</td><td>${descInput.value || 'Adj'}</td><td>${amt.toLocaleString()}</td><td>-</td><td style="color:#10b981">● Adj Entry</td>`;
+            bT += amt;
+            tr.innerHTML = `<td>Adjust</td><td>${descInput.value || 'Deposit'}</td><td>${amt.toLocaleString()}</td><td>-</td><td style="color:#10b981">Adjustment</td>`;
         }
         
         amtInput.value = ''; descInput.value = '';
@@ -197,14 +194,21 @@
     }
 
     function updateUI() {
-        document.getElementById('bBal').innerText = `$${bankTotal.toLocaleString(undefined, {minimumFractionDigits:2})}`;
-        document.getElementById('lBal').innerText = `$${ledgerTotal.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+        document.getElementById('bBal').innerText = `$${bT.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+        document.getElementById('lBal').innerText = `$${lT.toLocaleString(undefined, {minimumFractionDigits:2})}`;
     }
 
     function loadSample() {
-        const b = [{Date:'2026-04-10', Description:'Bank Opening', Amount:28000}];
-        const l = [{Date:'2026-04-10', Description:'Book Opening', Amount:28000}];
-        process(b, l);
+        const bank = [
+            {Date:'2026-04-01', Description:'Opening Bal', Amount:15000},
+            {Date:'2026-04-13', Description:'Bank Deposit - Faisalabad Branch', Amount:26000},
+            {Date:'2026-04-14', Description:'Bank Fee', Amount:25}
+        ];
+        const ledger = [
+            {Date:'2026-04-01', Description:'Opening Bal', Amount:15000},
+            {Date:'2026-04-13', Description:'Faisalabad Deposit', Amount:26000}
+        ];
+        process(bank, ledger);
     }
 
     function exportCSV() {
@@ -215,12 +219,12 @@
         });
         const blob = new Blob([csv.join("\n")], {type: 'text/csv'});
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a"); a.href = url; a.download = "Talha_Recon.csv"; a.click();
+        const a = document.createElement("a"); a.href = url; a.download = "Recon_Export.csv"; a.click();
     }
 
     function exportExcel() {
         const wb = XLSX.utils.table_to_book(document.getElementById('reconTable'));
-        XLSX.writeFile(wb, "Talha_Recon_Report.xlsx");
+        XLSX.writeFile(wb, "Recon_Export.xlsx");
     }
 </script>
 </body>
